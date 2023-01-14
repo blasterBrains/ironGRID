@@ -1,17 +1,25 @@
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
+  
 
-const myURI =
-  'postgres://btlouyzd:eWHHMZUqi4VTT2mrAHfzVk-7PLjLMvmc@mahmud.db.elephantsql.com/btlouyzd';
-
-const URI = process.env.PG_URI || myURI;
+const URI = process.env.MYURI
 
 const pool = new Pool({
   connectionString: URI,
 });
 
-module.exports = {
-  query: (text: string, params: Array<string>, callback: () => void) => {
+interface Params {
+  name: string,
+  admin: boolean,
+  phone: string,
+  short_code: number,
+}
+
+const db = {
+  query: (text: string, params: Params, callback: (err: Error, result: QueryResult<any>) => void) => {
     console.log('executed query', text);
-    return pool.query(text, params, callback);
+    const request: Params = params;
+    const postValues = [request.name, request.admin, request.phone, request.short_code];
+    return pool.query(text, postValues, callback);
   },
 };
+export default db;
