@@ -1,6 +1,10 @@
 export default function Landing() {
   
   return (
-    <h1>hello</h1>
+    <div>
+      <h1>ironGRID</h1>
+      <button>Create New ironGRID</button>
+      <button>Join Existing ironGRID</button>
+    </div>
   )
 }
