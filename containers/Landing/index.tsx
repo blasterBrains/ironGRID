@@ -1,10 +1,11 @@
+import { Container, Box, Button } from "@chakra-ui/react";
+
 export default function Landing() {
-  
   return (
-    <div>
-      <h1>ironGRID</h1>
-      <button>Create New ironGRID</button>
-      <button>Join Existing ironGRID</button>
-    </div>
-  )
+    <Container>
+      <Box color='gray.100'>ironGRID</Box>
+      <Button>Create New ironGRID</Button>
+      <Button>Join Existing ironGRID</Button>
+    </Container>
+  );
 }
