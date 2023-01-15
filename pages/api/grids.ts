@@ -2,6 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { QueryResult } from 'pg'
 import db from './models/gridsModel'
+import prisma from '../../lib/prisma';
+import { Prisma } from '@prisma/client';
 
 type GridData = {
   name: string,
@@ -29,38 +31,77 @@ interface NextApiRequestWithGridData extends NextApiRequest {
   }
 }
 
-export default function handler(
+interface NextApiResponsetWithGridData extends NextApiResponse {
+  body: {
+    id: number,
+    name: string,
+    cost: number,
+    size: number,
+    first?: number,
+    second?: number,
+    third?: number,
+    final?: number,
+    token: string,
+    inverse: boolean
+  }
+}
+
+export default async function gridHandler(
   req: NextApiRequestWithGridData,
-  res: NextApiResponse<GridData>
+  res: NextApiResponsetWithGridData
 ) {
   if (req.method === 'POST') {
-    const postText = 'INSERT INTO grids(name, cost, size, token, inverse) VALUES($1, $2, $3, $4, $5) RETURNING short_code'
-    const postValues: GridData = req.body
-    
-    db.query(postText, postValues, (err: Error, res: QueryResult) => {
-        if(err) {
-            console.log(err.stack)
-        } else {
-            console.log(res)
+    const data = req.body;
+        try {
+          const newGrid = await prisma.grids.create({
+            data,
+          })
+          console.log('newGrid: ', newGrid);
+          return res.status(200).json(newGrid);
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              console.log('Error occured during Get request to grids Table: ', error.code, error.message)
+            }
+            throw error;
         }
-    })
-    return res.status(200).json(req.body)
   } else if (req.method === 'GET') {
-    // res.status(200).json('')
+    const { token } = req.body;
+      try {
+        const grid = await prisma.grids.findUnique({
+          where: {
+            token,
+          }
+        });
+        console.log(grid);
+        return res.status(200).json(grid);
+      } catch (error) {
+          if (error instanceof Prisma.PrismaClientValidationError) {
+            console.log('Error occured during Get request to grids Table: ', error.message)
+          }
+          if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+            console.log('Error occured during Get request to grids Table: ', error.message)
+          }
+          console.log('error: ', error)
+          throw error;
+      }
   } else if (req.method === 'DELETE') {
-    const postText = 'DELETE FROM grids'
-    const postValues: GridData = req.body
-    
-    db.query(postText, postValues, (err: Error, res: QueryResult) => {
-        if(err) {
-            console.log(err.stack)
-        } else {
-            console.log(res)
+    const { token } = req.body;
+        try {
+          const deletedGrid = await prisma.grids.delete({
+            where: {
+              token,
+            }
+          })
+          console.log('deletedGrid: ', deletedGrid);
+          return res.status(200).json(deletedGrid);
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              console.log('Error occured during Get request to Grids Table: ', error.code, error.message)
+            }
+            throw error;
         }
-    })
-    return res.status(200).json(req.body)
   }
-  // res.status(200).json({ name: 'John Doe' })
+  
 }
 
     // {

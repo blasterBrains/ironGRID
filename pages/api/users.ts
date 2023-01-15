@@ -1,9 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { QueryResult } from 'pg'
-import db from './models/usersModel'
+// import { QueryResult } from 'pg'
+// import db from './models/usersModel'
 import prisma from '../../lib/prisma';
-
+import { Prisma } from '@prisma/client';
+import Error from 'next/error';
 
 interface Data {
   name: string;
@@ -11,8 +12,6 @@ interface Data {
   phone: string;
   short_code: number;
 }
-// const text = 'INSERT INTO users(name, admin, phone, short_code) VALUES($1, $2, $3, $4) RETURNING short_code'
-// const values = ['Antknee', true, '8433493827', 849358];
 interface NextApiRequestWithUserData extends NextApiRequest {
   body: {
     name: string,
@@ -22,63 +21,69 @@ interface NextApiRequestWithUserData extends NextApiRequest {
   }
 }
 
-export default async function handler(
-  req: NextApiRequestWithUserData,
-  res: NextApiResponse<Data>
-) {
-    if (req.method === 'GET') {
-      const postText = 'SELECT * FROM users'
-      const postValues: Data = req.body
-      
-      db.query(postText, postValues, (err: Error, res: QueryResult) => {
-          if(err) {
-              console.log(err.stack)
-          } else {
-              console.log(res)
-          }
-      })
-      return res.status(200).json(req.body)
-    } else if (req.method === 'POST') {
-      
-      const Users = await prisma.users.create({
-        data: {
-          name:'Buliah',
-          admin: true,
-          phone: '7137132137',
-          short_code: 256343
-        },
-      })
-      // const postText = 'INSERT INTO users(name, admin, phone, short_code) VALUES($1, $2, $3, $4) RETURNING short_code'
-      // const postValues: Data = req.body
-      
-      // db.query(postText, postValues, (err: Error, res: QueryResult) => {
-      //     if(err) {
-      //         console.log(err.stack)
-      //     } else {
-      //         console.log(res)
-      //     }
-      // })
-      // return res.status(200).json(req.body)
-    } else if (req.method === 'DELETE') {
-      // const postText = 'DELETE FROM users'
-      // const postValues: Data = req.body
-      
-      // db.query(postText, (err: Error, res: QueryResult) => {
-      //     if(err) {
-      //         console.log(err.stack)
-      //     } else {
-      //         console.log(res)
-      //     }
-      // })
-      // return res.status(200).json(req.body)
-    }
+interface NextApiResponseWithUserData extends NextApiResponse {
+  body: {
+    id: number,
+    name: string,
+    admin: boolean,
+    phone: string,
+    short_code: number,
+  }
 }
 
-// post request
-// {
-//   "name": "Buliah",
-//   "admin": true,
-//   "phone": "7137132137",
-//   "short_code": 256343
-// }
+export default async function userHandler(
+  req: NextApiRequestWithUserData,
+  res: NextApiResponseWithUserData
+) {
+    if (req.method === 'GET') {
+      const { phone } = req.body;
+      try {
+        const user = await prisma.users.findUnique({
+          where: {
+            phone,
+          }
+        });
+        return res.status(200).json(user);
+      } catch (error) {
+          if (error instanceof Prisma.PrismaClientValidationError) {
+            console.log('Error occured during Get request to Users Table: ', error.message)
+          }
+          if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+            console.log('Error occured during Get request to Users Table: ', error.message)
+          }
+          console.log('error: ', error)
+          throw error;
+      }
+    } else if (req.method === 'POST') {
+        const data = req.body;
+        try {
+          const newUser: Data = await prisma.users.create({
+            data,
+          })
+          console.log('newUser: ', newUser);
+          return res.status(200).json(newUser);
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              console.log('Error occured during Get request to Users Table: ', error.code, error.message)
+            }
+            throw error;
+        }
+    } else if (req.method === 'DELETE') {
+        const { phone } = req.body;
+        try {
+          const deletedUser: Data = await prisma.users.delete({
+            where: {
+              phone,
+            }
+          })
+          console.log('deletedUser: ', deletedUser);
+          return res.status(200).json(deletedUser);
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              console.log('Error occured during Get request to Users Table: ', error.code, error.message)
+            }
+            throw error;
+        }
+    }
+}
 
