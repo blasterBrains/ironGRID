@@ -1,13 +1,19 @@
+import { useEffect } from 'react';
+import { getGame, getUpcomingGames } from '../../common/utils/espn';
+
 import { Container, Heading, Button, Text } from '@chakra-ui/react';
 
 export default function Landing() {
+  useEffect(() => {
+    // getGame('401438002');
+  }, []);
   const vertCenterFullHeight = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column' as 'column',
     height: '100vh',
-  };
+};
   return (
     <Container {...vertCenterFullHeight} bg="#5e95b5">
       <Heading m={10} color="gray">
@@ -21,3 +27,4 @@ export default function Landing() {
     </Container>
   );
 }
+
