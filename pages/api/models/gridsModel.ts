@@ -8,17 +8,22 @@ const pool = new Pool({
 });
 
 interface Params {
-  name: string,
-  admin: boolean,
-  phone: string,
-  short_code: number,
+    name: string,
+    cost: number,
+    size: number,
+    first?: number,
+    second?: number,
+    third?: number,
+    final?: number,
+    token: string,
+    inverse: boolean
 }
 
 const db = {
   query: (text: string, params: Params, callback: (err: Error, result: QueryResult<any>) => void) => {
     console.log('executed query', text);
     const request: Params = params;
-    const postValues = [request.name, request.admin, request.phone, request.short_code];
+    const postValues = [request.name, request.cost, request.size, request.token, request.inverse];
     return pool.query(text, postValues, callback);
   },
 };

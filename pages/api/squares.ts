@@ -13,7 +13,7 @@ export default function handler(
   res: NextApiResponse<SquareData>
 ) {
   if (req.method === 'GET') {
-    res.status(200).json()
+    // res.status(200).json()
   } else if (req.method === 'POST') {
     // res.status(200).json()
   }
