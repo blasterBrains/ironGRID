@@ -9,15 +9,15 @@ export default function Landing() {
     height: '100vh',
   };
   return (
-    <Container {...vertCenterFullHeight} bg="blue">
+    <Container {...vertCenterFullHeight} bg="#5e95b5">
       <Heading m={10} color="gray">
         ironGRID
       </Heading>
-      <Text color="white">Create a square pool and invite friends to play</Text>
-      <Button mx={5} my={5}>
+      <Text color="#daebf5">Create a square pool and invite friends to play</Text>
+      <Button mx={5} my={5} bg='#daebf5'>
         Create a grid
       </Button>
-      <Button>Join a grid</Button>
+      <Button mx={5} my={5} bg='#daebf5'>Join a grid</Button>
     </Container>
   );
 }
