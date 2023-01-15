@@ -24,6 +24,7 @@ interface Competitor {
 }
 
 interface Event {
+  id: string;
   clock: string;
   competitionId: string;
   name: string;
