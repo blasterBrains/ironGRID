@@ -72,6 +72,11 @@ interface Sport {
   leagues: League[];
 }
 
+/* 
+  ESPN API routes taken from this gist:
+  https://gist.github.com/nntrn/ee26cb2a0716de0947a0a4e9a157bc1c#v2sportsfootballleaguesnflcalendar
+ */
+
 export const getUpcomingGames = async () => {
   const { data } = await axios.get<{ sports: Sport[] }>(
     'https://site.web.api.espn.com/apis/v2/scoreboard/header',
@@ -93,4 +98,10 @@ export const getUpcomingGames = async () => {
   return data.sports[0]?.leagues[0]?.events || [];
 };
 
-export const getGame = async (id: string) => {};
+export const getGame = async (id: string) => {
+  const event = await axios.get<Event>(
+    `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/${id}`
+  );
+
+  return event;
+};

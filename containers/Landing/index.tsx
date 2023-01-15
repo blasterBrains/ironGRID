@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { getUpcomingGames } from '../../common/utils/espn';
+import { getGame, getUpcomingGames } from '../../common/utils/espn';
 
 export default function Landing() {
   useEffect(() => {
-    getUpcomingGames();
+    // getGame('401438002');
   }, []);
 
   return (
