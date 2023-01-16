@@ -1,7 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-// import { QueryResult } from 'pg'
-// import db from './models/usersModel'
 import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
 import Error from 'next/error';
@@ -14,10 +12,10 @@ interface Data {
 }
 interface NextApiRequestWithUserData extends NextApiRequest {
   body: {
-    name: string,
-    admin: boolean,
-    phone: string,
-    short_code: number,
+    name: string;
+    admin: boolean;
+    phone: string;
+    short_code: number;
   }
 }
 
@@ -36,11 +34,11 @@ export default async function userHandler(
   res: NextApiResponseWithUserData
 ) {
     if (req.method === 'GET') {
-      const { phone } = req.body;
+      const id = Number(req.query.id);
       try {
         const user = await prisma.users.findUnique({
           where: {
-            phone,
+            id,
           }
         });
         return res.status(200).json(user);
@@ -69,11 +67,11 @@ export default async function userHandler(
             throw error;
         }
     } else if (req.method === 'DELETE') {
-        const { phone } = req.body;
+      const id = Number(req.query.id);
         try {
           const deletedUser: Data = await prisma.users.delete({
             where: {
-              phone,
+              id,
             }
           })
           console.log('deletedUser: ', deletedUser);

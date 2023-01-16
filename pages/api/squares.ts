@@ -12,6 +12,7 @@ interface SquareData {
 
 interface NextApiRequestWithSquareData extends NextApiRequest {
   body: {
+    id?: number;
     user_id: number;
     status?: string;
     grid_id: number;
@@ -34,12 +35,11 @@ export default async function handler(
   res: NextApiResponseWithSquareData
 ) {
   if (req.method === 'GET') {
-      const { grid_id, index } = req.body;
+    const id = Number(req.query.id);
       try {
-        const square = await prisma.squares.findMany({
+        const square = await prisma.squares.findFirst({
           where: {
-            grid_id,
-            index,
+            id
           }
         });
         return res.status(200).json(square);
@@ -68,12 +68,11 @@ export default async function handler(
             throw error;
         }
     } else if (req.method === 'DELETE') {
-        const { grid_id, index } = req.body;
+      const id = Number(req.query.id);
         try {
-          const deletedsquare = await prisma.squares.deleteMany({
+          const deletedsquare = await prisma.squares.delete({
             where: {
-              grid_id,
-              index
+              id
             }
           })
           console.log('deletedsquare: ', deletedsquare);
