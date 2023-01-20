@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Grids {
+  id        Int         @id @default(autoincrement())
+  squares   Squares[]   
+  name      String
+  cost      Int
+  size      Int         
+  first     Int?  
+  second    Int?
+  third     Int?
+  final     Int?
+  token     String      @unique
+  inverse   Boolean     @default(false)
+}
+
+model Users {
+  id         Int        @id @default(autoincrement())
+  squares    Squares[]
+  name       String
+  admin      Boolean    @default(false)
+  phone      String     @unique
+  short_code Int        @unique
+}
+
+model Squares {
+  id         Int        @id @default(autoincrement())
+  user_id    Int
+  users      Users      @relation(fields: [user_id], references: [id])
+  grid_id    Int 
+  grids      Grids      @relation(fields: [grid_id], references: [id])
+  status     String     @default("pending")
+  index      Int
+}
