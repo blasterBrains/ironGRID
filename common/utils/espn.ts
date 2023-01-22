@@ -23,7 +23,7 @@ interface Competitor {
   winner: boolean;
 }
 
-interface Event {
+export interface Event {
   id: string;
   clock: string;
   competitionId: string;
@@ -65,7 +65,7 @@ interface League {
   smartdates: SmartDate[];
 }
 
-interface Sport {
+export interface Sport {
   id: string;
   name: string;
   slug: string;
