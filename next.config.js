@@ -5,5 +5,18 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
 };
+// deleted nextConfig in module exports, maybe i should add it back
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'a.espncdn.com',
+        port: '',
+        pathname: '/i/teamlogos/nfl/500/scoreboard/**',
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig;
+//https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/buf.png

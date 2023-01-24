@@ -1,5 +1,6 @@
 import { Container, Heading, Button, Center, useTheme } from '@chakra-ui/react';
 import LogoIcon from '../../common/components/LogoIcon';
+import Link from 'next/link';
 
 export default function Landing() {
   const { colors } = useTheme();
@@ -28,7 +29,9 @@ export default function Landing() {
         </Container>
 
         <Container py="6" centerContent position="fixed" bottom={2}>
-          <Button size="xl">Build</Button>
+          <Link href="/create-grid">
+            <Button size="xl">Build</Button>
+          </Link>
           <Button size="xl" variant="outline">
             Join
           </Button>

@@ -1,0 +1,75 @@
+import ChooseGame from './components/ChooseGame';
+import GridRules from './components/GridRules';
+import AdminForm from './components/AdminForm';
+import PhoneConfirm from './components/PhoneConfirm';
+import { useState, useEffect, useCallback } from 'react';
+import { getGame, getUpcomingGames } from '../../common/utils/espn';
+import type { Event } from '../../common/utils/espn';
+import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import JSXStyle from 'styled-jsx/style';
+import { Container } from '@chakra-ui/react';
+
+export interface FieldValues {
+  gameId?: string;
+  name?: string;
+  size?: number;
+  cost?: number;
+  inverse?: boolean;
+  adminName?: string;
+  phone?: string;
+  short_code?: number;
+}
+
+export enum CreateGridPage {
+  rules = 'rules',
+  admin = 'admin',
+  game = 'game',
+  phone = 'phone',
+}
+
+const CreateGridForm = () => {
+  const [page, setPage] = useState<CreateGridPage>(CreateGridPage.game);
+  const methods = useForm();
+
+  const onSubmit: SubmitHandler<FieldValues> = useCallback(
+    (data) => {
+      console.log('onSubmit', data);
+      switch (page) {
+        case 'game':
+          setPage(CreateGridPage.rules);
+          break;
+        case 'rules':
+          setPage(CreateGridPage.admin);
+          break;
+        case 'admin':
+          setPage(CreateGridPage.phone);
+          break;
+        default:
+          // submit form
+          break;
+      }
+    },
+    [page]
+  );
+
+  const renderPage = () => {
+    switch (page) {
+      case 'rules':
+        return <GridRules />;
+      case 'admin':
+        return <AdminForm />;
+      case 'phone':
+        return <PhoneConfirm />;
+      default:
+        return <ChooseGame />;
+    }
+  };
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>{renderPage()}</form>
+    </FormProvider>
+  );
+};
+
+export default CreateGridForm;

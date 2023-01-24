@@ -1,7 +1,5 @@
-import { red, white, yellow, green } from './colors';
-import { defineStyle, defineStyleConfig, extendTheme } from '@chakra-ui/react';
+import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 
-// https://chakra-ui.com/docs/styled-system/customize-theme
 // https://chakra-ui.com/docs/components/button/theming
 
 const variants = {
