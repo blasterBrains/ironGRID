@@ -1,19 +1,10 @@
-import { useEffect, useState, useRef, LegacyRef } from 'react';
-import { getGame, getUpcomingGames } from '../../../common/utils/espn';
-import {
-  Center,
-  Container,
-  Heading,
-  Button,
-  Text,
-  Box,
-  FormControl,
-  Select,
-} from '@chakra-ui/react';
+import { Box, Button, Container, FormControl, Heading } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import GameCard from './GameCard';
 import type { Event } from '../../../common/utils/espn';
-import type { CreateGridPage, FieldValues } from '../../CreateGridForm';
+import { getUpcomingGames } from '../../../common/utils/espn';
+import type { FieldValues } from '../../CreateGridForm';
+import GameCard from './GameCard';
 
 const ChooseGame = () => {
   const [selectedGame, setSelectedGame] = useState<string | undefined>();

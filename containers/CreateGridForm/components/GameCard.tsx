@@ -1,20 +1,15 @@
-import type { Event } from '../../../common/utils/espn';
 import {
-  Heading,
-  LinkOverlay,
-  Text,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Button,
-  Flex,
-  Spacer,
   Box,
+  Card,
+  CardBody,
+  CardHeader,
   Center,
-  Input,
+  Flex,
+  Heading,
+  Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
+import type { Event } from '../../../common/utils/espn';
 import { formatDate } from '../../../common/utils/time';
 
 interface GameCardProps {
