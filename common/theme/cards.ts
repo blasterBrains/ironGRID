@@ -1,9 +1,5 @@
 import { cardAnatomy } from '@chakra-ui/anatomy';
-import {
-  defineStyle,
-  defineStyleConfig,
-  createMultiStyleConfigHelpers,
-} from '@chakra-ui/react';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 
 // https://chakra-ui.com/docs/components/card/theming
 

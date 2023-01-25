@@ -2,12 +2,8 @@ import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import AdminForm from './components/AdminForm';
 import PhoneConfirm from './components/PhoneConfirm';
-import { useState, useEffect, useCallback } from 'react';
-import { getGame, getUpcomingGames } from '../../common/utils/espn';
-import type { Event } from '../../common/utils/espn';
+import { useState, useCallback } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
-import JSXStyle from 'styled-jsx/style';
-import { Container } from '@chakra-ui/react';
 
 export interface FieldValues {
   gameId?: string;

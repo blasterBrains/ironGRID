@@ -20,11 +20,9 @@ const ChooseGame = () => {
   const [upcomingGames, setUpcomingGames] = useState<Event[]>([]);
   const {
     formState: { errors },
-    getValues,
     setValue,
     register,
   } = useFormContext<FieldValues>();
-  const gameIdValue = getValues('gameId');
 
   const fetchUpcomingGames = async () => {
     try {
