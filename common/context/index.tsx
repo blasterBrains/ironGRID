@@ -7,42 +7,12 @@ import type {
   IronGridStateUser,
 } from '../types';
 import { Grid } from './reducers/gridReducer';
-// import { Square } from './reducers/squareReducer';
 import { User } from './reducers/userReducer';
 
-// interface CombineReducersSlice {
-//   Grid: (
-//     state: IronGridStateContext,
-//     action: GridActions | UserActions
-//   ) => IronGridStateContext;
-//   User: (
-//     state: IronGridStateContext,
-//     action: UserActions | UserActions
-//   ) => IronGridStateContext;
-// }
-
-
-// const combineReducers =
-// (slices: CombineReducersSlice) =>
-//   (
-//     state: IronGridStateContext,
-//     action: GridActions | UserActions
-//   ) =>
-//     Object.keys(slices).reduce((acc, prop) => {
-//       const currFunc = slices[prop as keyof CombineReducersSlice];
-//       return {
-//         ...acc,
-//         [prop]: currFunc(state, action),
-//       };
-//     }, state);
-
-// const rootReducer = combineReducers({ Grid, User, });
-
-
 type InitialStateType = {
-  grid: IronGridStateGrid,
-  user: IronGridStateUser
-}
+  grid: IronGridStateGrid;
+  user: IronGridStateUser;
+};
 
 const initialState: InitialStateType = {
   grid: {},
@@ -62,7 +32,7 @@ const mainReducer = (
   action: GridActions | UserActions
 ) => ({
   grid: Grid(grid, action),
-  user: User(user, action)
+  user: User(user, action),
 });
 
 interface OwnProps {
