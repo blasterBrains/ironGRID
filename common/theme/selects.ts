@@ -1,14 +1,11 @@
-import { inputAnatomy } from '@chakra-ui/anatomy';
+import { selectAnatomy } from '@chakra-ui/anatomy';
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 
 const { definePartsStyle, defineMultiStyleConfig } =
-  createMultiStyleConfigHelpers(inputAnatomy.keys);
+  createMultiStyleConfigHelpers(selectAnatomy.keys);
 
 const outline = definePartsStyle({
   field: {
-    _placeholder: {
-      color: 'white',
-    },
     color: 'white',
     _invalid: {
       borderWidth: 2,
@@ -21,10 +18,13 @@ const outline = definePartsStyle({
       boxShadow: 'none',
     },
   },
+  icon: {
+    color: 'white',
+  },
 });
 
-const inputs = defineMultiStyleConfig({
+const selects = defineMultiStyleConfig({
   variants: { outline },
 });
 
-export default inputs;
+export default selects;

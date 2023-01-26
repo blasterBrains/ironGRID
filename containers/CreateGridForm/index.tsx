@@ -4,8 +4,6 @@ import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
-import { useState, useCallback } from 'react';
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 
 export interface FieldValues {
   gameId?: string;

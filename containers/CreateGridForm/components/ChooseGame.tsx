@@ -52,7 +52,7 @@ const ChooseGame = () => {
             pt={[20, 32]}
             pb={[12, 22]}
           >
-            Choose a Game
+            Choose Game
           </Heading>
         </Container>
 

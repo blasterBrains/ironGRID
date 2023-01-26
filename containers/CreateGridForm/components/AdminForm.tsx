@@ -55,7 +55,7 @@ const AdminForm = () => {
           pt={[20, 32]}
           pb={[16, 28]}
         >
-          Log In
+          Register to Play
         </Heading>
 
         <Stack spacing={6}>
@@ -97,7 +97,7 @@ const AdminForm = () => {
           </InputGroup>
           {!isInvalid ? (
             <FormHelperText color="white" maxWidth={[60, 80]}>
-              Your phone number to needed log in and access your grids.
+              Your phone number is needed to log in and access your grids.
             </FormHelperText>
           ) : (
             <FormErrorMessage>{formatError()}</FormErrorMessage>
