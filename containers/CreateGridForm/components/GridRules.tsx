@@ -114,7 +114,7 @@ const GridRules = () => {
           Configure Rules
         </Heading>
 
-        <Stack spacing={6} mt={[180, 240]}>
+        <Stack spacing={6} mt={[180, 240]} width="100%" px={5}>
           <Input
             {...register('name', {
               required: 'Must provide a grid name',

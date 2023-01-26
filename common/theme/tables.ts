@@ -19,7 +19,9 @@ const simple = definePartsStyle({
     borderStyle: 'solid',
     borderWidth: 2,
     borderColor: 'white',
-    width: 100,
+    fontSize: 12,
+    width: 62,
+    height: 62,
   },
 });
 

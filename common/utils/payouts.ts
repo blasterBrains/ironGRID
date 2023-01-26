@@ -23,21 +23,48 @@ export const calculatePayouts = (
 ) => {
   const total = squareCost * gridSize;
   if (inverse) {
+    let remainder = 0;
+
+    let first = total * InverseQuarter.first;
+    remainder += first - Math.floor(first);
+    let firstInverse = total * InverseQuarter.firstInverse;
+    remainder += firstInverse - Math.floor(firstInverse);
+
+    let second = total * InverseQuarter.second;
+    remainder += second - Math.floor(second);
+    let secondInverse = total * InverseQuarter.secondInverse;
+    remainder += secondInverse - Math.floor(secondInverse);
+
+    let third = total * InverseQuarter.third;
+    remainder += third - Math.floor(third);
+    let thirdInverse = total * InverseQuarter.thirdInverse;
+    remainder += thirdInverse - Math.floor(thirdInverse);
+
+    let fourthInverse = total * InverseQuarter.fourthInverse;
+    remainder += fourthInverse - Math.floor(fourthInverse);
+
     return {
-      first: total * InverseQuarter.first,
-      firstInverse: total * InverseQuarter.firstInverse,
-      second: total * InverseQuarter.second,
-      secondInverse: total * InverseQuarter.secondInverse,
-      third: total * InverseQuarter.third,
-      thirdInverse: total * InverseQuarter.thirdInverse,
-      fourth: total * InverseQuarter.fourth,
-      fourthInverse: total * InverseQuarter.fourthInverse,
+      first: Math.floor(first),
+      firstInverse: Math.floor(firstInverse),
+      second: Math.floor(second),
+      secondInverse: Math.floor(secondInverse),
+      third: Math.floor(third),
+      thirdInverse: Math.floor(thirdInverse),
+      fourth: total * InverseQuarter.fourth + remainder,
+      fourthInverse: Math.floor(fourthInverse),
     };
   }
+  let remainder = 0;
+  let first = total * Quarter.first;
+  remainder += first - Math.floor(first);
+  let second = total * Quarter.second;
+  remainder += second - Math.floor(second);
+  let third = total * Quarter.third;
+  remainder += third - Math.floor(third);
   return {
-    first: total * Quarter.first,
-    second: total * Quarter.second,
-    third: total * Quarter.third,
-    fourth: total * Quarter.fourth,
+    first: Math.floor(first),
+    second: Math.floor(second),
+    third: Math.floor(third),
+    fourth: total * Quarter.fourth + remainder,
   };
 };
