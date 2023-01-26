@@ -1,30 +1,39 @@
-import { useEffect } from 'react';
-import { getGame, getUpcomingGames } from '../../common/utils/espn';
-
-import { Container, Heading, Button, Text } from '@chakra-ui/react';
+import { Container, Heading, Button, Center, useTheme } from '@chakra-ui/react';
+import LogoIcon from '../../common/components/LogoIcon';
 
 export default function Landing() {
-  useEffect(() => {
-    // getGame('401438002');
-  }, []);
-  const vertCenterFullHeight = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column' as 'column',
-    height: '100vh',
-};
+  const { colors } = useTheme();
   return (
-    <Container {...vertCenterFullHeight} bg="#5e95b5">
-      <Heading m={10} color="gray">
-        ironGRID
-      </Heading>
-      <Text color="#daebf5">Create a square pool and invite friends to play</Text>
-      <Button mx={5} my={5} bg='#daebf5'>
-        Create a grid
-      </Button>
-      <Button mx={5} my={5} bg='#daebf5'>Join a grid</Button>
-    </Container>
+    <Center bg={colors.green['500']} minHeight="100vh">
+      <Container centerContent>
+        <LogoIcon fill={colors.white} width={280} />
+        <Heading
+          fontSize={['5xl', '6xl']}
+          mt={[8, 10]}
+          mb={[2, 10]}
+          color={colors.white}
+        >
+          ironGRID
+        </Heading>
+
+        <Container py="6" centerContent>
+          <Heading
+            fontSize={[16, 20]}
+            color={colors.white}
+            textAlign="center"
+            px={[10, 20]}
+          >
+            Build a football square pool and share it with your friends!
+          </Heading>
+        </Container>
+
+        <Container py="6" centerContent position="fixed" bottom={2}>
+          <Button size="xl">Build</Button>
+          <Button size="xl" variant="outline">
+            Join
+          </Button>
+        </Container>
+      </Container>
+    </Center>
   );
 }
-

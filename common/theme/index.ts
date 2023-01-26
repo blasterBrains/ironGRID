@@ -1,17 +1,20 @@
-import { theme } from '@chakra-ui/react';
-import type { Theme } from '@chakra-ui/react';
-import * as palette from './palette';
+import { extendTheme } from '@chakra-ui/react';
+import * as colors from './colors';
 import global from './global';
+import Button from './buttons';
 
-const customTheme: Theme = {
-  ...theme,
-  colors: {
-    ...theme.colors,
-    ...palette,
+const customTheme = extendTheme({
+  colors,
+  fonts: {
+    heading: 'Futura',
+    body: 'Futura',
   },
   styles: {
     global,
   },
-};
+  components: {
+    Button,
+  },
+});
 
 export default customTheme;
