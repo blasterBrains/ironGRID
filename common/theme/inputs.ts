@@ -1,14 +1,12 @@
 import { inputAnatomy } from '@chakra-ui/anatomy';
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
+import { green, white } from './colors';
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const outline = definePartsStyle({
   field: {
-    _placeholder: {
-      color: 'white',
-    },
     color: 'white',
     _invalid: {
       borderWidth: 2,
@@ -19,6 +17,11 @@ const outline = definePartsStyle({
       borderWidth: 2,
       borderColor: 'yellow.500',
       boxShadow: 'none',
+    },
+    _autofill: {
+      background: 'green.500',
+      WebkitTextFillColor: white,
+      WebkitBoxShadow: `0 0 0px 1000px ${green['500']} inset`,
     },
   },
 });

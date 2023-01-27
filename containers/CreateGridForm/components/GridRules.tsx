@@ -133,6 +133,7 @@ const GridRules = () => {
             })}
             placeholder="Grid Name"
             isInvalid={!!errors.name}
+            type="text"
           />
 
           <Select
@@ -142,8 +143,9 @@ const GridRules = () => {
             })}
             isInvalid={!!errors.size}
             defaultValue=""
+            textColor={!gridSize ? 'gray.400' : undefined}
           >
-            <option style={{ color: 'gray' }} hidden disabled value="">
+            <option hidden disabled value="">
               Grid Size
             </option>
             <option value={100}>10x10</option>

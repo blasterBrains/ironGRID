@@ -20,7 +20,7 @@ dayjs.extend(localeData, {
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 });
 
-export const formatDate = (date: string, format: string = 'Today, MMM DD') => {
+export const formatDate = (date: string, format: string = 'ddd, MMM DD') => {
   const day = dayjs(date);
   if (day.isToday()) return `Today, ${day.format('MMM DD')}`;
   if (day.isTomorrow()) return `Tomorrow, ${day.format('MMM DD')}`;

@@ -17,6 +17,9 @@ const outline = definePartsStyle({
       borderColor: 'yellow.500',
       boxShadow: 'none',
     },
+    _placeholder: {
+      color: 'gray.400',
+    },
   },
   icon: {
     color: 'white',
