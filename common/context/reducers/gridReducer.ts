@@ -1,4 +1,4 @@
-import type { IronGridStateGrid, UserActions, GridActions } from '../../types';
+import type { GridActions, IronGridStateGrid, UserActions } from '../../types';
 import { GridTypes } from '../../types';
 
 export function Grid(
@@ -6,17 +6,22 @@ export function Grid(
   action: GridActions | UserActions
 ) {
   const { type, payload } = action;
+  console.log('type: ', type, 'payload: ', payload);
+  const grid = payload;
   switch (type) {
     case GridTypes.Create:
-      return { grid: payload, ...state };
+      return payload;
     case GridTypes.Delete:
-      return { grid: payload, ...state };
+      return {};
     case GridTypes.Update:
-      return { grid: payload, ...state };
+      return { ...state, ...payload };
     case GridTypes.CreateSquare:
-      return { grid: payload, ...state };
+      return { squares: [...(state.squares || []), payload], ...state };
     case GridTypes.DeleteSquare:
-      return { grid: payload, ...state };
+      return {
+        squares: state.squares?.filter((square) => square.id !== payload.id),
+        ...state,
+      };
     default:
       return state;
   }

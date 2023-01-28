@@ -1,10 +1,7 @@
 import React, { createContext, Dispatch, useReducer } from 'react';
 import type {
-  IronGridStateContext,
-  GridActions,
-  UserActions,
-  IronGridStateGrid,
-  IronGridStateUser,
+  GridActions, IronGridStateGrid,
+  IronGridStateUser, UserActions
 } from '../types';
 import { Grid } from './reducers/gridReducer';
 import { User } from './reducers/userReducer';
@@ -40,7 +37,6 @@ interface OwnProps {
 }
 
 export const StoreProvider = ({ children }: OwnProps) => {
-  // const [state, dispatch] = useReducer(rootReducer, initialState);
   const [state, dispatch] = useReducer(mainReducer, initialState);
   // Important(!): memoize array value. Else all context consumers update on *every* render
   const store = React.useMemo(() => {
@@ -48,8 +44,7 @@ export const StoreProvider = ({ children }: OwnProps) => {
   }, [state]);
   return (
     <IronGridContext.Provider value={store}>
-      {' '}
-      {children}{' '}
+      {children}
     </IronGridContext.Provider>
   );
 };

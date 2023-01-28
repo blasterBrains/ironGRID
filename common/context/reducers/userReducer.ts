@@ -1,4 +1,4 @@
-import type { IronGridStateUser, UserActions, GridActions } from '../../types';
+import type { GridActions, IronGridStateUser, UserActions } from '../../types';
 import { UserTypes } from '../../types';
 
 export function User(
@@ -8,11 +8,11 @@ export function User(
   const { type, payload } = action;
   switch (type) {
     case UserTypes.Create:
-      return { User: payload, ...state };
+      return payload;
     case UserTypes.Delete:
-      return { User: payload, ...state };
+      return {};
     case UserTypes.Update:
-      return { User: payload, ...state };
+      return { ...state, ...payload };
     default:
       return state;
   }

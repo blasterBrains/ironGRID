@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-// types for grids.ts
-
+//universal action mapping for types
 export type ActionMap<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
     ? {
@@ -13,16 +12,20 @@ export type ActionMap<M extends { [index: string]: any }> = {
       };
 };
 
+//user-related state/context dispatch actions
 export type UserActions = ActionMap<UserPayload>[keyof ActionMap<UserPayload>];
 
+//dispatch user type literals
 export enum UserTypes {
   Create = 'CREATE_USER',
   Delete = 'DELETE_USER',
   Update = 'UPDATE_USER',
 }
 
+//typings for each user action type's payload
 export type UserPayload = {
   [UserTypes.Create]: {
+    id: number;
     name: string;
     admin: boolean;
     phone: string;
@@ -40,8 +43,11 @@ export type UserPayload = {
   };
 };
 
+//grid-related state/context dispatch actions
 export type GridActions = ActionMap<GridPayload>[keyof ActionMap<GridPayload>];
 
+
+//dispatch grid type literals
 export enum GridTypes {
   Create = 'CREATE_GRID',
   Delete = 'DELETE_GRID',
@@ -50,20 +56,23 @@ export enum GridTypes {
   DeleteSquare = 'DELETE_SQUARE',
 }
 
+//typings for each grid action type's payload
 export type GridPayload = {
   [GridTypes.Create]: {
+    id: number;
     name: string;
     cost: number;
     size: number;
     token: string;
     inverse: boolean;
     game_id: string;
+    squares: IronGridStateSquare[];
   };
   [GridTypes.Delete]: {
     id: number;
   };
   [GridTypes.Update]: {
-    id: number;
+    id?: number;
     name?: string;
     cost?: number;
     size?: number;
@@ -76,6 +85,7 @@ export type GridPayload = {
     game_id?: string;
   };
   [GridTypes.CreateSquare]: {
+    id?: number;
     user_id?: number;
     status?: string;
     grid_id?: number;
@@ -86,6 +96,7 @@ export type GridPayload = {
   };
 };
 
+//typing for postgres database (grids table) related transactions
 export type GridData = {
   name: string;
   cost: number;
@@ -132,6 +143,7 @@ export interface NextApiResponsetWithGridData extends NextApiResponse {
 }
 
 // types for squares.ts
+//typing for postgres database (squares table) related transactions
 export interface SquareData {
   user_id: number;
   status?: string;
