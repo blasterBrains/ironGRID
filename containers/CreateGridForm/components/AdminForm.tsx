@@ -12,7 +12,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
-import { FieldValues } from '..';
+import type { FieldValues } from '..';
 import PhoneIcon from '../../../common/components/PhoneIcon';
 
 const AdminForm = () => {
