@@ -4,7 +4,6 @@ import {
   Container,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
   Heading,
   Input,
   Popover,
@@ -22,16 +21,15 @@ import {
   SliderTrack,
   Stack,
   Switch,
-  Text,
-  TableContainer,
   Table,
-  Tr,
-  Th,
-  Td,
-  Thead,
+  TableContainer,
   Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { calculatePayouts } from '../../../common/utils/payouts';
 import type { FieldValues } from '../../CreateGridForm';

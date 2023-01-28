@@ -1,6 +1,6 @@
-import { Container, Heading, Button, Center, useTheme } from '@chakra-ui/react';
-import LogoIcon from '../../common/components/LogoIcon';
+import { Button, Center, Container, Heading, useTheme } from '@chakra-ui/react';
 import Link from 'next/link';
+import LogoIcon from '../../common/components/LogoIcon';
 
 export default function Landing() {
   const { colors } = useTheme();

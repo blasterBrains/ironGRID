@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import Router, { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
@@ -13,7 +14,7 @@ export interface FieldValues {
   inverse?: boolean;
   adminName?: string;
   phone?: string;
-  short_code?: number;
+  short_code?: string;
 }
 
 export enum CreateGridPage {
@@ -24,21 +25,33 @@ export enum CreateGridPage {
 }
 
 const CreateGridForm = () => {
-  const [page, setPage] = useState<CreateGridPage>(CreateGridPage.game);
+  const router = useRouter();
+  const { page = CreateGridPage.game } = router.query as {
+    page: CreateGridPage;
+  };
   const methods = useForm();
 
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     (data) => {
       console.log('onSubmit', data);
       switch (page) {
-        case 'game':
-          setPage(CreateGridPage.rules);
+        case CreateGridPage.game:
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.rules },
+          });
           break;
-        case 'rules':
-          setPage(CreateGridPage.admin);
+        case CreateGridPage.rules:
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.admin },
+          });
           break;
-        case 'admin':
-          setPage(CreateGridPage.phone);
+        case CreateGridPage.admin:
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.phone },
+          });
           break;
         default:
           // submit form
@@ -50,11 +63,11 @@ const CreateGridForm = () => {
 
   const renderPage = () => {
     switch (page) {
-      case 'rules':
+      case CreateGridPage.rules:
         return <GridRules />;
-      case 'admin':
+      case CreateGridPage.admin:
         return <AdminForm />;
-      case 'phone':
+      case CreateGridPage.phone:
         return <PhoneConfirm />;
       default:
         return <ChooseGame />;
