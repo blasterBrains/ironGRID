@@ -1,12 +1,13 @@
 import { Button, Center, Container, Heading, useTheme } from '@chakra-ui/react';
-import * as React from 'react';
+import Link from 'next/link';
 import LogoIcon from '../../common/components/LogoIcon';
 import { IronGridContext } from '../../common/context';
 import useActions from '../../common/context/hooks/useActions';
+import { useContext } from 'react';
 
 export default function Landing() {
   const { colors } = useTheme();
-  const { state } = React.useContext(IronGridContext);
+  const { state } = useContext(IronGridContext);
 
   const { createGrid, deleteGrid } = useActions();
 
@@ -34,10 +35,10 @@ export default function Landing() {
         </Container>
 
         <Container py='6' centerContent position='fixed' bottom={2}>
-          <Button size='xl' onClick={createGrid}>
-            Build
-          </Button>
-          <Button size='xl' variant='outline' onClick={() => deleteGrid(1)}>
+          <Link href='/create-grid'>
+            <Button size='xl'>Build</Button>
+          </Link>
+          <Button size='xl' variant='outline'>
             Join
           </Button>
         </Container>

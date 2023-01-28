@@ -1,5 +1,77 @@
 import axios from 'axios';
-import type {HomeAway, Competitor, Event, SmartDate, League, Sport } from '../types'
+
+enum HomeAway {
+  home,
+  away,
+}
+
+interface Competitor {
+  abbreviation: string;
+  alternateColor: string;
+  color: string;
+  displayName: string;
+  id: string;
+  homeAway: HomeAway;
+  location: string;
+  logo: string;
+  logoDark: string;
+  name: string;
+  record: string;
+  score: string;
+  uid: string;
+  order: number;
+  winner: boolean;
+}
+
+export interface Event {
+  id: string;
+  clock: string;
+  competitionId: string;
+  name: string;
+  date: string;
+  note: string;
+  location: string;
+  period: number;
+  season: number;
+  playByPlayAvailable: boolean;
+  shortname: string;
+  summary: string;
+  week: number;
+  weekText: number;
+  competitors: Competitor[];
+  fullStatus: {
+    clock: number;
+    displayClock: string;
+    period: number;
+  };
+}
+
+interface SmartDate {
+  label: string;
+  season: number;
+  seasontype: number;
+  week: number;
+}
+
+interface League {
+  abbreviation: string;
+  id: string;
+  isTournament: boolean;
+  name: string;
+  shortName: string;
+  slug: string;
+  uid: string;
+  events: Event[];
+  smartdates: SmartDate[];
+}
+
+export interface Sport {
+  id: string;
+  name: string;
+  slug: string;
+  uid: string;
+  leagues: League[];
+}
 
 /* 
   ESPN API routes taken from this gist:
