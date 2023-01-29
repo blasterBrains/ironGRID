@@ -105,6 +105,7 @@ export type GridPayload = {
 
 //typing for postgres database (grids table) related transactions
 export type GridData = {
+  id: number;
   name: string;
   cost: number;
   size: number;
@@ -115,6 +116,7 @@ export type GridData = {
   token: string;
   inverse: boolean;
   game_id: string;
+  squares: SquareData[];
 };
 
 export interface NextApiRequestWithGridData extends NextApiRequest {
@@ -275,7 +277,10 @@ export interface UserAction {
   payload: IronGridStateUser;
 }
 
-//types for espn.ts
+/* 
+  ESPN Types
+ */
+
 export enum HomeAway {
   home,
   away,
