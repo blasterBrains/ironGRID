@@ -1,36 +1,26 @@
 import { useContext } from 'react';
-import { GridTypes, UserTypes } from '../../../common/types';
+import {
+  GridPayload,
+  GridTypes,
+  UserTypes,
+  UserPayload,
+} from '../../../common/types';
 import { IronGridContext } from '../../../common/context';
 
 const useActions = () => {
-  const { state, dispatch } = useContext(IronGridContext);
+  const { dispatch } = useContext(IronGridContext);
 
-  const createGrid = () => {
+  const createGrid = (payload: GridPayload[GridTypes.Create]) => {
     dispatch({
       type: GridTypes.Create,
-      payload: {
-        id: 1,
-        name: 'Anthony',
-        cost: 5,
-        size: 100,
-        token: 'ZZZZ',
-        inverse: false,
-        game_id: '123456789',
-        squares: [],
-      },
+      payload,
     });
   };
 
-  const createUser = () => {
+  const createUser = (payload: UserPayload[UserTypes.Create]) => {
     dispatch({
       type: UserTypes.Create,
-      payload: {
-        id: 1,
-        name: 'Anthony',
-        admin: true,
-        phone: '1234567890',
-        short_code: 347890,
-      },
+      payload,
     });
   };
 
@@ -48,24 +38,17 @@ const useActions = () => {
     });
   };
 
-  const updateGrid = (id: number) => {
+  const updateGrid = (payload: GridPayload[GridTypes.Update]) => {
     dispatch({
       type: GridTypes.Update,
-      payload: {
-        id: 1,
-        name: 'Anthony-ish',
-        cost: 10,
-        }
-    })
-  }
+      payload,
+    });
+  };
 
-  const updateUser = () => {
+  const updateUser = (payload: UserPayload[UserTypes.Update]) => {
     dispatch({
       type: UserTypes.Update,
-      payload: {
-        id: 1,
-        name: 'Anthony-ish-user'
-      },
+      payload,
     });
   };
 

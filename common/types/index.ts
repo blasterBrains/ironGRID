@@ -72,7 +72,7 @@ export type GridPayload = {
     id: number;
   };
   [GridTypes.Update]: {
-    id?: number;
+    id: number;
     name?: string;
     cost?: number;
     size?: number;
@@ -95,7 +95,7 @@ export type GridPayload = {
     id: number;
   };
   [GridTypes.UpdateSquare]: {
-    id?: number;
+    id: number;
     user_id?: number;
     status?: string;
     grid_id?: number;
