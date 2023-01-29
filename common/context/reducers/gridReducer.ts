@@ -22,6 +22,11 @@ export function Grid(
         squares: state.squares?.filter((square) => square.id !== payload.id),
         ...state,
       };
+    case GridTypes.UpdateSquare:
+      let squareIndex = state.squares?.findIndex(square => square.id === payload.id)
+      if (squareIndex === undefined || squareIndex === -1) return state
+      let newSquare = {...state.squares?.[squareIndex], ...payload};
+        return { squares: state.squares?.splice(squareIndex, 1, newSquare)}
     default:
       return state;
   }

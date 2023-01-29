@@ -46,7 +46,6 @@ export type UserPayload = {
 //grid-related state/context dispatch actions
 export type GridActions = ActionMap<GridPayload>[keyof ActionMap<GridPayload>];
 
-
 //dispatch grid type literals
 export enum GridTypes {
   Create = 'CREATE_GRID',
@@ -54,6 +53,7 @@ export enum GridTypes {
   Update = 'UPDATE_GRID',
   CreateSquare = 'CREATE_SQUARE',
   DeleteSquare = 'DELETE_SQUARE',
+  UpdateSquare = 'UPDATE_SQUARE',
 }
 
 //typings for each grid action type's payload
@@ -93,6 +93,13 @@ export type GridPayload = {
   };
   [GridTypes.DeleteSquare]: {
     id: number;
+  };
+  [GridTypes.UpdateSquare]: {
+    id?: number;
+    user_id?: number;
+    status?: string;
+    grid_id?: number;
+    index?: number;
   };
 };
 
@@ -227,12 +234,6 @@ export type IronGridStateUser = {
   admin?: boolean;
   phone?: string;
   short_code?: number;
-};
-
-export type IronGridStateSchema = {
-  grid: IronGridStateGrid;
-  user: IronGridStateUser;
-  squares: IronGridStateSquare[];
 };
 
 export type IronGridStateContext = {

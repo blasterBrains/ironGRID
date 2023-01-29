@@ -37,7 +37,7 @@ const useActions = () => {
   const deleteUser = (id: number) => {
     dispatch({
       type: UserTypes.Delete,
-      payload: { id: 1 },
+      payload: { id },
     });
   };
 
@@ -48,10 +48,33 @@ const useActions = () => {
     });
   };
 
+  const updateGrid = (id: number) => {
+    dispatch({
+      type: GridTypes.Update,
+      payload: {
+        id: 1,
+        name: 'Anthony-ish',
+        cost: 10,
+        }
+    })
+  }
+
+  const updateUser = () => {
+    dispatch({
+      type: UserTypes.Update,
+      payload: {
+        id: 1,
+        name: 'Anthony-ish-user'
+      },
+    });
+  };
+
   return {
     createGrid,
+    updateGrid,
     deleteGrid,
     createUser,
+    updateUser,
     deleteUser,
   };
 };

@@ -1,19 +1,12 @@
 import { Button, Center, Container, Heading, useTheme } from '@chakra-ui/react';
 import Link from 'next/link';
 import LogoIcon from '../../common/components/LogoIcon';
-import { IronGridContext } from '../../common/context';
-import useActions from '../../common/context/hooks/useActions';
-import { useContext } from 'react';
 
 export default function Landing() {
   const { colors } = useTheme();
-  const { state } = useContext(IronGridContext);
 
-  const { createGrid, deleteGrid } = useActions();
-
-  console.log(state);
   return (
-    <Center bg={colors.green['500']} minHeight='100vh'>
+    <Center bg={colors.green['500']} minHeight="100vh">
       <Container centerContent>
         <LogoIcon fill={colors.white} width={280} />
         <Heading
@@ -24,21 +17,21 @@ export default function Landing() {
           ironGRID
         </Heading>
 
-        <Container py='6' centerContent>
+        <Container py="6" centerContent>
           <Heading
             fontSize={[16, 20]}
             color={colors.white}
-            textAlign='center'
+            textAlign="center"
             px={[10, 20]}>
             Build a football square pool and share it with your friends!
           </Heading>
         </Container>
 
-        <Container py='6' centerContent position='fixed' bottom={2}>
-          <Link href='/create-grid'>
-            <Button size='xl'>Build</Button>
+        <Container py="6" centerContent position="fixed" bottom={2}>
+          <Link href="/create-grid">
+            <Button size="xl">Build</Button>
           </Link>
-          <Button size='xl' variant='outline'>
+          <Button size="xl" variant="outline">
             Join
           </Button>
         </Container>
