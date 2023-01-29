@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import isTomorrow from 'dayjs/plugin/isTomorrow';
 import isToday from 'dayjs/plugin/isToday';
+import isTomorrow from 'dayjs/plugin/isTomorrow';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import localeData from 'dayjs/plugin/localeData';
 

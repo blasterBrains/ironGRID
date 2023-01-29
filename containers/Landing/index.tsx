@@ -1,9 +1,10 @@
-import { Container, Heading, Button, Center, useTheme } from '@chakra-ui/react';
-import LogoIcon from '../../common/components/LogoIcon';
+import { Button, Center, Container, Heading, useTheme } from '@chakra-ui/react';
 import Link from 'next/link';
+import LogoIcon from '../../common/components/LogoIcon';
 
 export default function Landing() {
   const { colors } = useTheme();
+
   return (
     <Center bg={colors.green['500']} minHeight="100vh">
       <Container centerContent>
@@ -12,8 +13,7 @@ export default function Landing() {
           fontSize={['5xl', '6xl']}
           mt={[8, 10]}
           mb={[2, 10]}
-          color={colors.white}
-        >
+          color={colors.white}>
           ironGRID
         </Heading>
 
@@ -22,8 +22,7 @@ export default function Landing() {
             fontSize={[16, 20]}
             color={colors.white}
             textAlign="center"
-            px={[10, 20]}
-          >
+            px={[10, 20]}>
             Build a football square pool and share it with your friends!
           </Heading>
         </Container>
