@@ -111,7 +111,7 @@ const AdminForm = () => {
             variant="outline"
             isDisabled={!isValid}
           >
-            Continue
+            Get Access Code
           </Button>
         </Box>
       </Container>

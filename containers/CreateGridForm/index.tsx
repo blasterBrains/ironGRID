@@ -1,10 +1,11 @@
 import Router, { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
+import axios from '../../common/utils/api';
 
 export interface FieldValues {
   gameId?: string;
@@ -24,12 +25,46 @@ export enum CreateGridPage {
   phone = 'phone',
 }
 
+interface VerifyPhoneResponse {
+  status: string;
+  valid: boolean;
+}
+
 const CreateGridForm = () => {
+  const [resentCode, setResentCode] = useState(false);
+
   const router = useRouter();
   const { page = CreateGridPage.game } = router.query as {
     page: CreateGridPage;
   };
   const methods = useForm();
+
+  const handleSendVerificationText = useCallback(
+    async (phone: string, resending?: boolean) => {
+      try {
+        const { data } = await axios.post<VerifyPhoneResponse>('/send-code', {
+          phone,
+        });
+        if (data.status === 'pending') {
+          if (resending) {
+            setResentCode(true);
+          }
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.phone },
+          });
+        }
+        // TODO: handle else case
+      } catch (error) {
+        // TODO: need to clearErrors()
+        methods.setError('apiResponse', {
+          type: 'custom',
+          message: 'An unexpected error occured',
+        });
+      }
+    },
+    [methods]
+  );
 
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     (data) => {
@@ -48,17 +83,16 @@ const CreateGridForm = () => {
           });
           break;
         case CreateGridPage.admin:
-          Router.push({
-            pathname: '/create-grid',
-            query: { page: CreateGridPage.phone },
-          });
+          if (data.phone) {
+            handleSendVerificationText(data.phone);
+          }
           break;
         default:
           // submit form
           break;
       }
     },
-    [page]
+    [page, handleSendVerificationText]
   );
 
   const renderPage = () => {
@@ -68,7 +102,12 @@ const CreateGridForm = () => {
       case CreateGridPage.admin:
         return <AdminForm />;
       case CreateGridPage.phone:
-        return <PhoneConfirm />;
+        return (
+          <PhoneConfirm
+            onResendCode={handleSendVerificationText}
+            resentCode={resentCode}
+          />
+        );
       default:
         return <ChooseGame />;
     }
