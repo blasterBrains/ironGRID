@@ -61,7 +61,11 @@ const AdminForm = () => {
         <Stack spacing={6}>
           <Input
             {...register('adminName', {
-              pattern: /[a-z]/i,
+              // pattern: /[a-z]/i,
+              pattern: {
+                value: /^[A-Za-z\s]*$/,
+                message: 'Invalid characters in your name',
+              },
               required: 'Must provide your name',
               maxLength: {
                 value: 32,
@@ -88,7 +92,11 @@ const AdminForm = () => {
                   value: 10,
                   message: 'Phone number can only be 10 numbers long',
                 },
-                pattern: /[1-9]{1}[0-9]{9}/,
+                pattern: {
+                  // either not allow dashes at all or allow dashes in number
+                  value: /^[1-9]{1}[0-9]{9}$/,
+                  message: 'Invalid characters in your phone number',
+                },
               })}
               type="number"
               placeholder="Phone Number"

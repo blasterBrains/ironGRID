@@ -40,3 +40,4 @@ model Squares {
   grids   Grids  @relation(fields: [grid_id], references: [id])
   users   Users  @relation(fields: [user_id], references: [id])
 }
+

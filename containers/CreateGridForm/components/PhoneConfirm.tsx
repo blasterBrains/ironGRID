@@ -95,6 +95,15 @@ const PhoneConfirm = ({ onResendCode, resentCode }: OwnProps) => {
           <Link color="yellow.300" mb={5} onClick={onResendCodeClick}>
             Resend code
           </Link>
+          {resentCode ? (
+            <FormHelperText
+              color="white"
+              maxWidth={[60, 80]}
+              textAlign="center"
+            >
+              Code has been resent
+            </FormHelperText>
+          ) : null}
           <Button
             type="submit"
             size="xl"
