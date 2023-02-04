@@ -4,7 +4,6 @@ import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
 import Error from 'next/error';
 import type {
-  Data,
   NextApiRequestWithUserData,
   NextApiResponseWithUserData,
 } from '../../common/types';
@@ -14,9 +13,9 @@ export default async function userHandler(
   res: NextApiResponseWithUserData
 ) {
   if (req.method === 'GET') {
-    const id = Number(req.query.id);
+    const id = req.query.id;
     try {
-      const user = await prisma.users.findUnique({
+      const user = await prisma.user.findUnique({
         where: {
           id,
         },
@@ -41,7 +40,7 @@ export default async function userHandler(
   } else if (req.method === 'POST') {
     const data = req.body;
     try {
-      const newUser: Data = await prisma.users.create({
+      const newUser: Data = await prisma.user.create({
         data,
       });
       console.log('newUser: ', newUser);
@@ -57,9 +56,9 @@ export default async function userHandler(
       throw error;
     }
   } else if (req.method === 'DELETE') {
-    const id = Number(req.query.id);
+    const id = req.query.id;
     try {
-      const deletedUser: Data = await prisma.users.delete({
+      const deletedUser: Data = await prisma.user.delete({
         where: {
           id,
         },
