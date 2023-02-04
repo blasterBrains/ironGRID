@@ -35,51 +35,6 @@ const CreateGridForm = () => {
   };
   const methods = useForm({ mode: 'onBlur' });
 
-  // return
-  const handleCreateUser = useCallback(
-    async (fields: FieldValues) => {
-      const { phone, adminName } = fields;
-      try {
-        const { data: userResponse } = await axios.post<Users>('/users', {
-          name: adminName,
-          phone,
-        });
-      } catch (error) {
-        methods.setError('apiResponse', {
-          type: 'custom',
-          message:
-            'Sorry we are having issues creating your account. Please try again at a later time.',
-        });
-      }
-    },
-    [methods]
-  );
-
-  const handleCreateGrid = () => {};
-  const handleVerifyPhone = useCallback(
-    async (fields: FieldValues) => {
-      const { phone, short_code: shortCode } = fields;
-      try {
-        const { data } = await axios.post<VerifyPhoneResponse>('/verify-code', {
-          phone,
-          short_code: shortCode,
-        });
-        if (data.status === 'approved') {
-          handleCreateUser(fields);
-        } else {
-          throw new Error(data.reason);
-        }
-      } catch (error) {
-        // TODO: need to clearErrors()
-        methods.setError('apiResponse', {
-          type: 'custom',
-          message: 'Invalid token, please try again',
-        });
-      }
-    },
-    [handleCreateUser, methods]
-  );
-
   const handleSendVerificationText = useCallback(
     async (phone: string, resending?: boolean) => {
       try {
@@ -101,18 +56,58 @@ const CreateGridForm = () => {
           throw new Error(data.reason);
         }
       } catch (error) {
-        // TODO: need to clearErrors()
-        methods.setError('apiResponse', {
+        methods.setError('short_code', {
           type: 'custom',
-          message: 'An unexpected error occured',
+          message: 'Invalid phone number, please try again',
         });
       }
     },
     [methods]
   );
 
+  const handleVerifyPhone = useCallback(async (fields: FieldValues) => {
+    const { phone, short_code: shortCode } = fields;
+    try {
+      const { data } = await axios.post<VerifyPhoneResponse>('/verify-code', {
+        phone,
+        short_code: shortCode,
+      });
+      if (data.status !== 'approved') {
+        throw new Error(data.reason);
+      }
+    } catch (error) {
+      throw new Error(
+        (error as { message?: string }).message ||
+          'Invalid code, please try again'
+      );
+    }
+  }, []);
+
+  const handleCreateUser = useCallback(
+    async (fields: FieldValues) => {
+      const { phone, name } = fields;
+      try {
+        const { data: userResponse } = await axios.post<User>('/users', {
+          name,
+          phone,
+        });
+      } catch (error) {
+        methods.setError('short_code', {
+          type: 'custom',
+          message:
+            'Sorry we are having issues creating your account. Please try again at a later time.',
+        });
+      }
+    },
+    [methods]
+  );
+
+  const handleCreateGrid = useCallback(async (fields: FieldValues) => {
+    console.log('creating grid', fields);
+  }, []);
+
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
-    (data) => {
+    async (data) => {
       console.log('onSubmit', data);
       switch (page) {
         case CreateGridPage.game:
@@ -133,11 +128,27 @@ const CreateGridForm = () => {
           }
           break;
         default:
-          handleVerifyPhone(data);
+          try {
+            await handleVerifyPhone(data);
+            await handleCreateUser(data);
+            await handleCreateGrid(data);
+          } catch (error) {
+            methods.setError('short_code', {
+              type: 'custom',
+              message: (error as { message: string }).message,
+            });
+          }
           break;
       }
     },
-    [page, handleSendVerificationText, handleVerifyPhone]
+    [
+      page,
+      handleSendVerificationText,
+      handleVerifyPhone,
+      handleCreateUser,
+      handleCreateGrid,
+      methods,
+    ]
   );
 
   const renderPage = () => {

@@ -19,6 +19,7 @@ const AdminForm = () => {
   const {
     formState: { errors, dirtyFields, isValid },
     register,
+    clearErrors,
   } = useFormContext<FieldValues>();
 
   const formatError = () => {
@@ -61,7 +62,11 @@ const AdminForm = () => {
         <Stack spacing={6}>
           <Input
             {...register('name', {
-              // pattern: /[a-z]/i,
+              onChange: () => {
+                if (errors.name) {
+                  clearErrors();
+                }
+              },
               pattern: {
                 value: /^[A-Za-z\s]*$/,
                 message: 'Invalid characters in your name',
@@ -83,6 +88,11 @@ const AdminForm = () => {
             </InputLeftElement>
             <Input
               {...register('phone', {
+                onChange: () => {
+                  if (errors.phone) {
+                    clearErrors();
+                  }
+                },
                 required: 'Must provide your phone number',
                 minLength: {
                   value: 10,

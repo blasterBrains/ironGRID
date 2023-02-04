@@ -37,11 +37,10 @@ import type { FieldValues } from '../../CreateGridForm';
 const GridRules = () => {
   const {
     formState: { errors, dirtyFields, isValid },
-    getValues,
     setValue,
     register,
-    setError,
     control,
+    clearErrors,
   } = useFormContext<FieldValues>();
 
   const gridSize = useWatch({
@@ -116,6 +115,11 @@ const GridRules = () => {
           <Input
             {...register('title', {
               required: 'Must provide a grid name',
+              onChange: () => {
+                if (errors.title) {
+                  clearErrors();
+                }
+              },
               minLength: {
                 value: 3,
                 message: 'Must be at least 3 characters',
