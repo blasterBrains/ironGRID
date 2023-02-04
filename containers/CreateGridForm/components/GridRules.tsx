@@ -56,24 +56,24 @@ const GridRules = () => {
     defaultValue: 1,
   });
 
-  const inverse = useWatch({
+  const reverse = useWatch({
     control,
-    name: 'inverse',
+    name: 'reverse',
     defaultValue: false,
   });
 
   const isInvalid =
-    (!!dirtyFields.name && !!errors.name) ||
+    (!!dirtyFields.title && !!errors.title) ||
     (!!dirtyFields.size && !!errors.size) ||
     (!!dirtyFields.cost && !!errors.cost) ||
-    (!!dirtyFields.inverse && !!errors.inverse);
+    (!!dirtyFields.reverse && !!errors.reverse);
 
   const formatError = () => {
-    if (errors.name && errors.size && errors.cost && errors.inverse) {
+    if (errors.title && errors.size && errors.cost && errors.reverse) {
       return 'Must fill out form';
     }
-    if (errors.name) {
-      return errors.name?.message || 'Invalid characters in your name';
+    if (errors.title) {
+      return errors.title?.message || 'Invalid characters in your grid title';
     }
     if (errors.size) {
       return errors.size?.message;
@@ -81,8 +81,8 @@ const GridRules = () => {
     if (errors.cost) {
       return errors.cost?.message;
     }
-    if (errors.inverse) {
-      return errors.inverse?.message;
+    if (errors.reverse) {
+      return errors.reverse?.message;
     }
     return null;
   };
@@ -95,7 +95,7 @@ const GridRules = () => {
     setValue('cost', value);
   };
 
-  const payouts = gridSize && calculatePayouts(squareCost, gridSize, inverse);
+  const payouts = gridSize && calculatePayouts(squareCost, gridSize, reverse);
 
   return (
     <FormControl isInvalid={isInvalid}>
@@ -114,7 +114,7 @@ const GridRules = () => {
 
         <Stack spacing={6} mt={[180, 240]} width="100%" px={5}>
           <Input
-            {...register('name', {
+            {...register('title', {
               required: 'Must provide a grid name',
               minLength: {
                 value: 3,
@@ -129,8 +129,8 @@ const GridRules = () => {
                 message: 'Invalid characters in your grid name',
               },
             })}
-            placeholder="Grid Name"
-            isInvalid={!!errors.name}
+            placeholder="Grid Title"
+            isInvalid={!!errors.title}
             type="text"
           />
 
@@ -158,7 +158,7 @@ const GridRules = () => {
             <Box display="flex" alignItems="center">
               <Popover>
                 <Text color="white" size="sm" fontWeight={600}>
-                  Inversed Payouts
+                  Reverse Payouts
                 </Text>
                 <PopoverTrigger>
                   {/* create helper button and popover themes */}
@@ -175,20 +175,15 @@ const GridRules = () => {
                 </PopoverTrigger>
                 <PopoverContent>
                   <PopoverArrow />
-                  <PopoverHeader>Inversed Payouts</PopoverHeader>
+                  <PopoverHeader>Reverse Payouts</PopoverHeader>
                   <PopoverCloseButton />
                   <PopoverBody>
-                    The person with inversed winning scores also wins
+                    The person with reversed winning scores also wins
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
             </Box>
-            <Switch
-              {...register('inverse')}
-              id="inverse-payout"
-              mx="5"
-              size="lg"
-            />
+            <Switch {...register('reverse')} mx="5" size="lg" />
           </Box>
 
           <Box display="flex" alignItems="center">
@@ -269,7 +264,7 @@ const GridRules = () => {
                     <Td>${payouts.third}</Td>
                     <Td>${payouts.fourth}</Td>
                   </Tr>
-                  {inverse ? (
+                  {reverse ? (
                     <Tr>
                       <Td fontWeight={600} fontSize="xs" color="yellow.500">
                         Inverse
@@ -303,7 +298,7 @@ const GridRules = () => {
 
 export default GridRules;
 
-// the person with each team score's inverse outcome also wins
+// the person with each team score's reverse outcome also wins
 /*
 First Quarter Payout 20%
 Half Time Payout 20%

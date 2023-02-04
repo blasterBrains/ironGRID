@@ -6,19 +6,12 @@ import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
 import axios from '../../common/utils/api';
-import { Data } from '../../common/types';
-import type { Users, Grids } from '@prisma/client';
+import type { Grid, User } from '@prisma/client';
 
-export interface FieldValues {
-  gameId?: string;
-  name?: string;
-  size?: number;
-  cost?: number;
-  inverse?: boolean;
-  adminName?: string;
-  phone?: string;
-  short_code?: string;
-}
+export type FieldValues = Partial<
+  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
+> &
+  Partial<Pick<User, 'name' | 'phone'>> & { short_code?: string };
 
 export enum CreateGridPage {
   rules = 'rules',
@@ -42,7 +35,6 @@ const CreateGridForm = () => {
   };
   const methods = useForm({ mode: 'onBlur' });
 
-  
   // return
   const handleCreateUser = useCallback(
     async (fields: FieldValues) => {
@@ -56,14 +48,14 @@ const CreateGridForm = () => {
         methods.setError('apiResponse', {
           type: 'custom',
           message:
-          'Sorry we are having issues creating your account. Please try again at a later time.',
+            'Sorry we are having issues creating your account. Please try again at a later time.',
         });
       }
     },
     [methods]
-    );
-    
-    const handleCreateGrid = () => {};
+  );
+
+  const handleCreateGrid = () => {};
   const handleVerifyPhone = useCallback(
     async (fields: FieldValues) => {
       const { phone, short_code: shortCode } = fields;
@@ -87,7 +79,6 @@ const CreateGridForm = () => {
     },
     [handleCreateUser, methods]
   );
-
 
   const handleSendVerificationText = useCallback(
     async (phone: string, resending?: boolean) => {

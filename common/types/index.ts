@@ -1,4 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import type { Prisma, Grid, Square, User } from '@prisma/client';
+
+export interface GridWithSquares extends Grid {
+  squares: Square[];
+}
+
+export interface UserWithGridsAndSquares extends User {
+  squares: Square[];
+  grids: Grid[];
+}
 
 //universal action mapping for types
 export type ActionMap<M extends { [index: string]: any }> = {
@@ -24,23 +34,9 @@ export enum UserTypes {
 
 //typings for each user action type's payload
 export type UserPayload = {
-  [UserTypes.Create]: {
-    id: number;
-    name: string;
-    admin: boolean;
-    phone: string;
-    short_code: number;
-  };
-  [UserTypes.Delete]: {
-    id: number;
-  };
-  [UserTypes.Update]: {
-    id: number;
-    name?: string;
-    admin?: boolean;
-    phone?: string;
-    short_code?: number;
-  };
+  [UserTypes.Create]: UserWithGridsAndSquares;
+  [UserTypes.Delete]: Pick<UserWithGridsAndSquares, 'id'>;
+  [UserTypes.Update]: Partial<User>;
 };
 
 //grid-related state/context dispatch actions
@@ -58,221 +54,41 @@ export enum GridTypes {
 
 //typings for each grid action type's payload
 export type GridPayload = {
-  [GridTypes.Create]: {
-    id: number;
-    name: string;
-    cost: number;
-    size: number;
-    token: string;
-    inverse: boolean;
-    game_id: string;
-    squares: IronGridStateSquare[];
-  };
-  [GridTypes.Delete]: {
-    id: number;
-  };
-  [GridTypes.Update]: {
-    id: number;
-    name?: string;
-    cost?: number;
-    size?: number;
-    first?: number;
-    second?: number;
-    third?: number;
-    final?: number;
-    token?: string;
-    inverse?: boolean;
-    game_id?: string;
-  };
-  [GridTypes.CreateSquare]: {
-    id?: number;
-    user_id?: number;
-    status?: string;
-    grid_id?: number;
-    index?: number;
-  };
-  [GridTypes.DeleteSquare]: {
-    id: number;
-  };
-  [GridTypes.UpdateSquare]: {
-    id: number;
-    user_id?: number;
-    status?: string;
-    grid_id?: number;
-    index?: number;
-  };
-};
-
-//typing for postgres database (grids table) related transactions
-export type GridData = {
-  name: string;
-  cost: number;
-  size: number;
-  first?: number;
-  second?: number;
-  third?: number;
-  final?: number;
-  token: string;
-  inverse: boolean;
-  game_id: string;
+  [GridTypes.Create]: GridWithSquares;
+  [GridTypes.Delete]: Pick<GridWithSquares, 'id'>;
+  [GridTypes.Update]: Partial<Grid>;
+  [GridTypes.CreateSquare]: GridWithSquares;
+  [GridTypes.DeleteSquare]: Pick<Square, 'id'>;
+  [GridTypes.UpdateSquare]: Partial<Square>;
 };
 
 export interface NextApiRequestWithGridData extends NextApiRequest {
-  body: {
-    id?: number;
-    name: string;
-    cost: number;
-    size: number;
-    first?: number;
-    second?: number;
-    third?: number;
-    final?: number;
-    token: string;
-    inverse: boolean;
-    game_id: string;
-  };
+  body: Prisma.GridCreateInput;
+  query: Pick<Grid, 'id'>;
 }
 
 export interface NextApiResponsetWithGridData extends NextApiResponse {
-  body: {
-    id: number;
-    name: string;
-    cost: number;
-    size: number;
-    first?: number;
-    second?: number;
-    third?: number;
-    final?: number;
-    token: string;
-    inverse: boolean;
-    game_id: string;
-  };
+  body: Grid;
 }
 
 // types for squares.ts
-//typing for postgres database (squares table) related transactions
-export interface SquareData {
-  user_id: number;
-  status?: string;
-  grid_id: number;
-  index: number;
-}
-
 export interface NextApiRequestWithSquareData extends NextApiRequest {
-  body: {
-    id?: number;
-    user_id: number;
-    status?: string;
-    grid_id: number;
-    index: number;
-  };
+  body: Prisma.SquareCreateInput;
+  query: Pick<Square, 'id'>;
 }
 
 export interface NextApiResponseWithSquareData extends NextApiResponse {
-  body: {
-    id: number;
-    user_id: number;
-    status?: string;
-    grid_id: number;
-    index: number;
-  };
+  body: Square;
 }
 
 // types for users.ts
-export interface Data {
-  name: string;
-  admin: boolean;
-  phone: string;
-  short_code: number;
-}
 export interface NextApiRequestWithUserData extends NextApiRequest {
-  body: {
-    name: string;
-    admin: boolean;
-    phone: string;
-    short_code: number;
-  };
+  body: Prisma.UserCreateInput;
+  query: Pick<User, 'id'>;
 }
 
 export interface NextApiResponseWithUserData extends NextApiResponse {
-  body: {
-    id: number;
-    name: string;
-    admin: boolean;
-    phone: string;
-    short_code: number;
-  };
-}
-
-//types for IronGridDataContext
-export type IronGridStateSquare = {
-  id?: number;
-  user_id?: number;
-  status?: string;
-  grid_id?: number;
-  index?: number;
-};
-
-export type IronGridStateGrid = {
-  id?: number;
-  name?: string;
-  cost?: number;
-  size?: number;
-  first?: number;
-  second?: number;
-  third?: number;
-  final?: number;
-  token?: string;
-  inverse?: boolean;
-  game_id?: string;
-  squares?: IronGridStateSquare[];
-};
-
-export type IronGridStateUser = {
-  id?: number;
-  name?: string;
-  admin?: boolean;
-  phone?: string;
-  short_code?: number;
-};
-
-export type IronGridStateContext = {
-  grid?: IronGridStateGrid;
-  user?: IronGridStateUser;
-  square?: IronGridStateSquare[];
-};
-
-enum GridActionKind {
-  ADD_GRID = 'ADD_GRID',
-  DELETE_GRID = 'DELETE_GRID',
-  EDIT_GRID = 'EDIT_GRID',
-}
-
-export interface GridAction {
-  type: GridActionKind;
-  payload: IronGridStateGrid;
-}
-
-enum SquareActionKind {
-  ADD_SQUARE = 'ADD_SQUARE',
-  DELETE_SQUARE = 'DELETE_SQUARE',
-  EDIT_SQUARE = 'EDIT_SQUARE',
-}
-
-export interface SquareAction {
-  type: SquareActionKind;
-  payload: IronGridStateSquare;
-}
-
-enum UserActionKind {
-  ADD_USER = 'ADD_USER',
-  DELETE_USER = 'DELETE_USER',
-  EDIT_USER = 'EDIT_USER',
-}
-
-export interface UserAction {
-  type: UserActionKind;
-  payload: IronGridStateUser;
+  body: User;
 }
 
 //types for espn.ts
