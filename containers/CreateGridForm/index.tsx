@@ -5,17 +5,12 @@ import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
+import type { Grid, User } from '@prisma/client';
 
-export interface FieldValues {
-  gameId?: string;
-  name?: string;
-  size?: number;
-  cost?: number;
-  inverse?: boolean;
-  adminName?: string;
-  phone?: string;
-  short_code?: string;
-}
+export type FieldValues = Partial<
+  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
+> &
+  Partial<Pick<User, 'name' | 'phone'>> & { short_code?: string };
 
 export enum CreateGridPage {
   rules = 'rules',

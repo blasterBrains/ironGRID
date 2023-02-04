@@ -22,11 +22,11 @@ const AdminForm = () => {
   } = useFormContext<FieldValues>();
 
   const formatError = () => {
-    if (errors.adminName && errors.phone) {
+    if (errors.name && errors.phone) {
       return 'Must fill out form';
     }
-    if (errors.adminName) {
-      return errors.adminName?.message || 'Invalid characters in your name';
+    if (errors.name) {
+      return errors.name?.message || 'Invalid characters in your name';
     }
     if (errors.phone) {
       return errors.phone?.message;
@@ -35,7 +35,7 @@ const AdminForm = () => {
   };
 
   const isInvalid =
-    (!!dirtyFields.adminName && !!errors.adminName) ||
+    (!!dirtyFields.name && !!errors.name) ||
     (!!dirtyFields.phone && !!errors.phone);
 
   return (
@@ -60,7 +60,7 @@ const AdminForm = () => {
 
         <Stack spacing={6}>
           <Input
-            {...register('adminName', {
+            {...register('name', {
               pattern: /[a-z]/i,
               required: 'Must provide your name',
               maxLength: {
@@ -68,7 +68,7 @@ const AdminForm = () => {
                 message: 'Too many characters in your name',
               },
             })}
-            isInvalid={!!errors.adminName}
+            isInvalid={!!errors.name}
             variant="outline"
             placeholder="Name"
             type="text"

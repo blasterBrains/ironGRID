@@ -1,8 +1,12 @@
-import type { GridActions, IronGridStateUser, UserActions } from '../../types';
+import type {
+  GridActions,
+  UserWithGridsAndSquares,
+  UserActions,
+} from '../../types';
 import { UserTypes } from '../../types';
 
 export function User(
-  state: IronGridStateUser,
+  state: UserWithGridsAndSquares | {},
   action: UserActions | GridActions
 ) {
   const { type, payload } = action;

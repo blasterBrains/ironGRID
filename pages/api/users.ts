@@ -1,8 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
-import Error from 'next/error';
 import type {
   NextApiRequestWithUserData,
   NextApiResponseWithUserData,
@@ -40,7 +38,7 @@ export default async function userHandler(
   } else if (req.method === 'POST') {
     const data = req.body;
     try {
-      const newUser: Data = await prisma.user.create({
+      const newUser = await prisma.user.create({
         data,
       });
       console.log('newUser: ', newUser);
@@ -58,7 +56,7 @@ export default async function userHandler(
   } else if (req.method === 'DELETE') {
     const id = req.query.id;
     try {
-      const deletedUser: Data = await prisma.user.delete({
+      const deletedUser = await prisma.user.delete({
         where: {
           id,
         },

@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import type { Prisma, Grid, Square, User } from '@prisma/client';
 
-interface GridWithSquares extends Grid {
+export interface GridWithSquares extends Grid {
   squares: Square[];
-};
+}
 
-interface UserWithGridsAndSquares extends User {
+export interface UserWithGridsAndSquares extends User {
   squares: Square[];
   grids: Grid[];
-};
+}
 
 //universal action mapping for types
 export type ActionMap<M extends { [index: string]: any }> = {
@@ -34,7 +34,7 @@ export enum UserTypes {
 
 //typings for each user action type's payload
 export type UserPayload = {
-  [UserTypes.Create]: UserWithGridsAndSquares
+  [UserTypes.Create]: UserWithGridsAndSquares;
   [UserTypes.Delete]: Pick<UserWithGridsAndSquares, 'id'>;
   [UserTypes.Update]: Partial<User>;
 };
@@ -54,7 +54,7 @@ export enum GridTypes {
 
 //typings for each grid action type's payload
 export type GridPayload = {
-  [GridTypes.Create]: GridWithSquares
+  [GridTypes.Create]: GridWithSquares;
   [GridTypes.Delete]: Pick<GridWithSquares, 'id'>;
   [GridTypes.Update]: Partial<Grid>;
   [GridTypes.CreateSquare]: GridWithSquares;
@@ -63,32 +63,32 @@ export type GridPayload = {
 };
 
 export interface NextApiRequestWithGridData extends NextApiRequest {
-  body: Prisma.GridCreateInput,
-  query: Pick<Grid, 'id'>,
+  body: Prisma.GridCreateInput;
+  query: Pick<Grid, 'id'>;
 }
 
 export interface NextApiResponsetWithGridData extends NextApiResponse {
-  body: Grid
+  body: Grid;
 }
 
 // types for squares.ts
 export interface NextApiRequestWithSquareData extends NextApiRequest {
-  body: Partial<Square>,
-  query: Pick<Square, 'id'>,
+  body: Prisma.SquareCreateInput;
+  query: Pick<Square, 'id'>;
 }
 
 export interface NextApiResponseWithSquareData extends NextApiResponse {
-  body: Square
+  body: Square;
 }
 
 // types for users.ts
 export interface NextApiRequestWithUserData extends NextApiRequest {
-  body: Prisma.UserCreateInput,
-  query: Pick<User, 'id'>,
+  body: Prisma.UserCreateInput;
+  query: Pick<User, 'id'>;
 }
 
 export interface NextApiResponseWithUserData extends NextApiResponse {
-  body: User
+  body: User;
 }
 
 //types for espn.ts
