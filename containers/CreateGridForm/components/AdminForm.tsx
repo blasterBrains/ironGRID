@@ -10,12 +10,17 @@ import {
   InputGroup,
   InputLeftElement,
   Stack,
+  Spinner,
 } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
 import type { FieldValues } from '..';
 import PhoneIcon from '../../../common/components/PhoneIcon';
 
-const AdminForm = () => {
+interface OwnProps {
+  loading: boolean;
+}
+
+const AdminForm = ({ loading }: OwnProps) => {
   const {
     formState: { errors, dirtyFields, isValid },
     register,
@@ -123,14 +128,28 @@ const AdminForm = () => {
         </Stack>
 
         <Box position="fixed" bottom={5} zIndex={1}>
-          <Button
-            type="submit"
-            size="xl"
-            variant="outline"
-            isDisabled={!isValid}
-          >
-            Get Access Code
-          </Button>
+          {loading ? (
+            <Button type="submit" size="xl" variant="outline" disabled>
+              {
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="yellow.300"
+                  size="lg"
+                ></Spinner>
+              }
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="xl"
+              variant="outline"
+              isDisabled={!isValid}
+            >
+              Get Access Code
+            </Button>
+          )}
         </Box>
       </Container>
     </FormControl>

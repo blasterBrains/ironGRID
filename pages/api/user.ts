@@ -22,13 +22,13 @@ export default async function userHandler(
     } catch (error) {
       if (error instanceof Prisma.PrismaClientValidationError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to User Table: ',
           error.message
         );
       }
       if (error instanceof Prisma.PrismaClientUnknownRequestError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to User Table: ',
           error.message
         );
       }
@@ -37,7 +37,16 @@ export default async function userHandler(
     }
   } else if (req.method === 'POST') {
     const data = req.body;
+    const { phone } = data;
+    console.log('data: ', data, 'phoooone: ', phone);
     try {
+      const userCheck = await prisma.user.findFirst({
+        where: {
+          phone,
+        },
+      });
+      console.log('userCheck: ', userCheck);
+      if (userCheck !== null) return res.status(200).json(userCheck);
       const newUser = await prisma.user.create({
         data,
       });
@@ -46,7 +55,7 @@ export default async function userHandler(
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Post request to User Table: ',
           error.code,
           error.message
         );
