@@ -26,7 +26,7 @@ const ChooseGame = () => {
   };
 
   const handleGameCardSelect = (id: string) => {
-    setValue('gameId', id);
+    setValue('game_id', id);
     setSelectedGame(id);
   };
 
@@ -35,7 +35,7 @@ const ChooseGame = () => {
   }, []);
 
   return (
-    <FormControl isInvalid={!errors.gameId}>
+    <FormControl isInvalid={!errors.game_id}>
       <Container centerContent bg={'green.500'} minHeight="100vh">
         <Container
           zIndex={1}
@@ -58,7 +58,7 @@ const ChooseGame = () => {
 
         <Container paddingTop={200} paddingBottom={100} centerContent>
           <select
-            {...register('gameId', {
+            {...register('game_id', {
               validate: (value) => value && value !== '',
             })}
             style={{ display: 'none' }}

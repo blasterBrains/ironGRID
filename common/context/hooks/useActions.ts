@@ -24,14 +24,14 @@ const useActions = () => {
     });
   };
 
-  const deleteUser = (id: number) => {
+  const deleteUser = (id: string) => {
     dispatch({
       type: UserTypes.Delete,
       payload: { id },
     });
   };
 
-  const deleteGrid = (id: number) => {
+  const deleteGrid = (id: string) => {
     dispatch({
       type: GridTypes.Delete,
       payload: { id },

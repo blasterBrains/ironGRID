@@ -19,14 +19,15 @@ const AdminForm = () => {
   const {
     formState: { errors, dirtyFields, isValid },
     register,
+    clearErrors,
   } = useFormContext<FieldValues>();
 
   const formatError = () => {
-    if (errors.adminName && errors.phone) {
+    if (errors.name && errors.phone) {
       return 'Must fill out form';
     }
-    if (errors.adminName) {
-      return errors.adminName?.message || 'Invalid characters in your name';
+    if (errors.name) {
+      return errors.name?.message || 'Invalid characters in your name';
     }
     if (errors.phone) {
       return errors.phone?.message;
@@ -35,7 +36,7 @@ const AdminForm = () => {
   };
 
   const isInvalid =
-    (!!dirtyFields.adminName && !!errors.adminName) ||
+    (!!dirtyFields.name && !!errors.name) ||
     (!!dirtyFields.phone && !!errors.phone);
 
   return (
@@ -60,15 +61,23 @@ const AdminForm = () => {
 
         <Stack spacing={6}>
           <Input
-            {...register('adminName', {
-              pattern: /[a-z]/i,
+            {...register('name', {
+              onChange: () => {
+                if (errors.name) {
+                  clearErrors();
+                }
+              },
+              pattern: {
+                value: /^[A-Za-z\s]*$/,
+                message: 'Invalid characters in your name',
+              },
               required: 'Must provide your name',
               maxLength: {
                 value: 32,
                 message: 'Too many characters in your name',
               },
             })}
-            isInvalid={!!errors.adminName}
+            isInvalid={!!errors.name}
             variant="outline"
             placeholder="Name"
             type="text"
@@ -79,6 +88,11 @@ const AdminForm = () => {
             </InputLeftElement>
             <Input
               {...register('phone', {
+                onChange: () => {
+                  if (errors.phone) {
+                    clearErrors();
+                  }
+                },
                 required: 'Must provide your phone number',
                 minLength: {
                   value: 10,
@@ -88,7 +102,11 @@ const AdminForm = () => {
                   value: 10,
                   message: 'Phone number can only be 10 numbers long',
                 },
-                pattern: /[1-9]{1}[0-9]{9}/,
+                pattern: {
+                  // either not allow dashes at all or allow dashes in number
+                  value: /^[1-9]{1}[0-9]{9}$/,
+                  message: 'Invalid characters in your phone number',
+                },
               })}
               type="number"
               placeholder="Phone Number"
@@ -111,7 +129,7 @@ const AdminForm = () => {
             variant="outline"
             isDisabled={!isValid}
           >
-            Continue
+            Get Access Code
           </Button>
         </Box>
       </Container>

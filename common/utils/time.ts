@@ -22,8 +22,8 @@ dayjs.extend(localeData, {
 
 export const formatDate = (date: string, format: string = 'ddd, MMM DD') => {
   const day = dayjs(date);
-  if (day.isToday()) return `Today, ${day.format('MMM DD')}`;
-  if (day.isTomorrow()) return `Tomorrow, ${day.format('MMM DD')}`;
-  if (day.isYesterday()) return `Yesterday, ${day.format('MMM DD')}`;
+  if (day.isToday()) return `Today, ${day.format('MMM DD @ h:mma')}`;
+  if (day.isTomorrow()) return `Tomorrow, ${day.format('MMM DD @ h:mma')}`;
+  if (day.isYesterday()) return `Yesterday, ${day.format('MMM DD @ h:mma')}`;
   return dayjs(date).format(format);
 };

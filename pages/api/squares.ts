@@ -1,5 +1,4 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
 import type {
@@ -12,9 +11,9 @@ export default async function handler(
   res: NextApiResponseWithSquareData
 ) {
   if (req.method === 'GET') {
-    const id = Number(req.query.id);
+    const { id } = req.query;
     try {
-      const square = await prisma.squares.findFirst({
+      const square = await prisma.square.findFirst({
         where: {
           id,
         },
@@ -39,7 +38,7 @@ export default async function handler(
   } else if (req.method === 'POST') {
     const data = req.body;
     try {
-      const newsquare = await prisma.squares.create({
+      const newsquare = await prisma.square.create({
         data,
       });
       console.log('newsquare: ', newsquare);
@@ -55,9 +54,9 @@ export default async function handler(
       throw error;
     }
   } else if (req.method === 'DELETE') {
-    const id = Number(req.query.id);
+    const { id } = req.query;
     try {
-      const deletedsquare = await prisma.squares.delete({
+      const deletedsquare = await prisma.square.delete({
         where: {
           id,
         },

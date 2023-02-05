@@ -32,7 +32,6 @@ export default async function sendCode(
       const { status, valid } = await client.verify.v2
         .services(serviceSid)
         .verifications.create({ to: `+1${phone}`, channel: 'sms' });
-
       return res.status(200).json({
         status,
         valid,

@@ -14,11 +14,24 @@ import {
 import { Controller, useFormContext } from 'react-hook-form';
 import type { FieldValues } from '../../CreateGridForm';
 
-const PhoneConfirm = () => {
+interface OwnProps {
+  onResendCode: (phone: string, resending?: boolean) => void;
+  resentCode: boolean;
+}
+
+const PhoneConfirm = ({ onResendCode, resentCode }: OwnProps) => {
   const {
     formState: { errors, isValid, dirtyFields },
     control,
+    getValues,
   } = useFormContext<FieldValues>();
+
+  const onResendCodeClick = () => {
+    const phone = getValues('phone');
+    if (phone) {
+      onResendCode(phone, true);
+    }
+  };
 
   return (
     <FormControl isInvalid={!!dirtyFields.short_code && !!errors.short_code}>
@@ -79,16 +92,25 @@ const PhoneConfirm = () => {
           flexDirection="column"
           alignItems="center"
         >
-          <Link color="yellow.300" mb={5}>
+          <Link color="yellow.300" mb={5} onClick={onResendCodeClick}>
             Resend code
           </Link>
+          {resentCode ? (
+            <FormHelperText
+              color="white"
+              maxWidth={[60, 80]}
+              textAlign="center"
+            >
+              Code has been resent
+            </FormHelperText>
+          ) : null}
           <Button
             type="submit"
             size="xl"
             variant="outline"
             isDisabled={!isValid}
           >
-            Enter
+            Create Grid
           </Button>
         </Box>
       </Container>
