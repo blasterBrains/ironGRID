@@ -13,10 +13,14 @@ import { getUpcomingGames } from '../../../common/utils/espn';
 import type { FieldValues } from '../../CreateGridForm';
 import GameCard from './GameCard';
 
+interface OwnProps {
+  loading: boolean;
+}
+
 const ChooseGame = () => {
   const [selectedGame, setSelectedGame] = useState<string | undefined>();
   const [upcomingGames, setUpcomingGames] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [gamesLoading, setGamesLoading] = useState(false);
 
   const {
     formState: { errors },
@@ -25,12 +29,12 @@ const ChooseGame = () => {
   } = useFormContext<FieldValues>();
 
   const fetchUpcomingGames = async () => {
-    setLoading(true);
+    setGamesLoading(true);
     try {
       const games = await getUpcomingGames();
       console.log(games);
       setUpcomingGames(games);
-      setLoading(false);
+      setGamesLoading(false);
     } catch (err) {
       console.error(err);
     }
@@ -80,7 +84,7 @@ const ChooseGame = () => {
                 ))
               : null}
           </select>
-          {loading ? (
+          {gamesLoading ? (
             <Spinner
               thickness="4px"
               speed="0.65s"

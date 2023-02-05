@@ -112,7 +112,7 @@ const CreateGridForm = () => {
   const handleCreateGrid = useCallback(
     async (fields: FieldValues & { creator_id: string }) => {
       console.log('creating grid', fields);
-      const { game_id, title, size, cost, reverse } = fields;
+      const { game_id, title, size, cost, reverse, creator_id } = fields;
       try {
         const { data: gridResponse } = await axios.post<Grid>('/grid', {
           game_id,
@@ -120,7 +120,9 @@ const CreateGridForm = () => {
           size,
           cost,
           reverse,
+          creator_id,
         });
+        return gridResponse;
       } catch (error) {
         methods.setError('createGrid', {
           type: 'custom',
@@ -160,17 +162,23 @@ const CreateGridForm = () => {
             const user = await handleCreateUser(data);
             if (!user) {
               setLoading(false);
-              return;
+              throw new Error('Sorry, an unexpected error occured');
             }
             if (!data.game_id) {
               setLoading(false);
-              return;
+              throw new Error('Sorry, an unexpected error occured');
             }
-            await handleCreateGrid({
+            const grid = await handleCreateGrid({
               ...data,
-              creator_id: user?.id,
+              creator_id: user.id,
             });
             setLoading(false);
+            if (!grid) {
+              throw new Error('Sorry, an unexpected error occured');
+            }
+            Router.push({
+              pathname: `/grid/${grid.token}`,
+            });
           } catch (error) {
             setLoading(false);
             methods.setError('short_code', {
