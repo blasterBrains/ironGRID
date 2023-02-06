@@ -12,6 +12,8 @@ model Grid {
   title      String
   cost       Int
   size       Int
+  x_values   Int[]
+  y_values   Int[]
   first      Int?
   second     Int?
   third      Int?

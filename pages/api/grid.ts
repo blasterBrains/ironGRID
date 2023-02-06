@@ -49,7 +49,7 @@ export default async function GridHandler(
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log(
-          'Error occured during Get request to grids Table: ',
+          'Error occured during Post request to grids Table: ',
           error.code,
           error.message
         );

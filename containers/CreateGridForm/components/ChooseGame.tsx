@@ -1,4 +1,11 @@
-import { Box, Button, Container, FormControl, Heading } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  Heading,
+  Spinner,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Event } from '../../../common/utils/espn';
@@ -6,9 +13,15 @@ import { getUpcomingGames } from '../../../common/utils/espn';
 import type { FieldValues } from '../../CreateGridForm';
 import GameCard from './GameCard';
 
+interface OwnProps {
+  loading: boolean;
+}
+
 const ChooseGame = () => {
   const [selectedGame, setSelectedGame] = useState<string | undefined>();
   const [upcomingGames, setUpcomingGames] = useState<Event[]>([]);
+  const [gamesLoading, setGamesLoading] = useState(false);
+
   const {
     formState: { errors },
     setValue,
@@ -16,10 +29,12 @@ const ChooseGame = () => {
   } = useFormContext<FieldValues>();
 
   const fetchUpcomingGames = async () => {
+    setGamesLoading(true);
     try {
       const games = await getUpcomingGames();
       console.log(games);
       setUpcomingGames(games);
+      setGamesLoading(false);
     } catch (err) {
       console.error(err);
     }
@@ -69,18 +84,26 @@ const ChooseGame = () => {
                 ))
               : null}
           </select>
-          {upcomingGames
-            ? upcomingGames.map((game) => {
-                return (
-                  <GameCard
-                    key={game.id}
-                    game={game}
-                    selected={game.id === selectedGame}
-                    onClick={handleGameCardSelect}
-                  />
-                );
-              })
-            : null}
+          {gamesLoading ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="yellow.300"
+              size="xl"
+            ></Spinner>
+          ) : upcomingGames ? (
+            upcomingGames.map((game) => {
+              return (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  selected={game.id === selectedGame}
+                  onClick={handleGameCardSelect}
+                />
+              );
+            })
+          ) : null}
         </Container>
 
         {selectedGame ? (

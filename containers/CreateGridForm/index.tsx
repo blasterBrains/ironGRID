@@ -7,6 +7,7 @@ import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
 import axios from '../../common/utils/api';
 import type { Grid, User } from '@prisma/client';
+import { Spinner } from '@chakra-ui/react';
 
 export type FieldValues = Partial<
   Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
@@ -28,6 +29,7 @@ interface VerifyPhoneResponse {
 
 const CreateGridForm = () => {
   const [resentCode, setResentCode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const { page = CreateGridPage.game } = router.query as {
@@ -38,12 +40,14 @@ const CreateGridForm = () => {
   const handleSendVerificationText = useCallback(
     async (phone: string, resending?: boolean) => {
       try {
+        setLoading(true);
         setResentCode(false);
         const { data } = await axios.post<VerifyPhoneResponse>('/send-code', {
           phone,
         });
         console.log('twilio data in handleSendVer...', data);
         if (data.status === 'pending') {
+          setLoading(false);
           if (resending) {
             setResentCode(true);
           } else {
@@ -68,10 +72,12 @@ const CreateGridForm = () => {
   const handleVerifyPhone = useCallback(async (fields: FieldValues) => {
     const { phone, short_code: shortCode } = fields;
     try {
+      setLoading(true);
       const { data } = await axios.post<VerifyPhoneResponse>('/verify-code', {
         phone,
         short_code: shortCode,
       });
+      setLoading(false);
       if (data.status !== 'approved') {
         throw new Error(data.reason);
       }
@@ -87,10 +93,11 @@ const CreateGridForm = () => {
     async (fields: FieldValues) => {
       const { phone, name } = fields;
       try {
-        const { data: userResponse } = await axios.post<User>('/users', {
+        const { data: userResponse } = await axios.post<User>('/user', {
           name,
           phone,
         });
+        return userResponse;
       } catch (error) {
         methods.setError('short_code', {
           type: 'custom',
@@ -102,9 +109,30 @@ const CreateGridForm = () => {
     [methods]
   );
 
-  const handleCreateGrid = useCallback(async (fields: FieldValues) => {
-    console.log('creating grid', fields);
-  }, []);
+  const handleCreateGrid = useCallback(
+    async (fields: FieldValues & { creator_id: string }) => {
+      console.log('creating grid', fields);
+      const { game_id, title, size, cost, reverse, creator_id } = fields;
+      try {
+        const { data: gridResponse } = await axios.post<Grid>('/grid', {
+          game_id,
+          title,
+          size,
+          cost,
+          reverse,
+          creator_id,
+        });
+        return gridResponse;
+      } catch (error) {
+        methods.setError('createGrid', {
+          type: 'custom',
+          message:
+            'Sorry we are having issues creating your grid. Please try again at a later time.',
+        });
+      }
+    },
+    [methods]
+  );
 
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     async (data) => {
@@ -129,10 +157,30 @@ const CreateGridForm = () => {
           break;
         default:
           try {
+            setLoading(true);
             await handleVerifyPhone(data);
-            await handleCreateUser(data);
-            await handleCreateGrid(data);
+            const user = await handleCreateUser(data);
+            if (!user) {
+              setLoading(false);
+              throw new Error('Sorry, an unexpected error occured');
+            }
+            if (!data.game_id) {
+              setLoading(false);
+              throw new Error('Sorry, an unexpected error occured');
+            }
+            const grid = await handleCreateGrid({
+              ...data,
+              creator_id: user.id,
+            });
+            setLoading(false);
+            if (!grid) {
+              throw new Error('Sorry, an unexpected error occured');
+            }
+            Router.push({
+              pathname: `/grid/${grid.token}`,
+            });
           } catch (error) {
+            setLoading(false);
             methods.setError('short_code', {
               type: 'custom',
               message: (error as { message: string }).message,
@@ -156,12 +204,13 @@ const CreateGridForm = () => {
       case CreateGridPage.rules:
         return <GridRules />;
       case CreateGridPage.admin:
-        return <AdminForm />;
+        return <AdminForm loading={loading} />;
       case CreateGridPage.phone:
         return (
           <PhoneConfirm
             onResendCode={handleSendVerificationText}
             resentCode={resentCode}
+            loading={loading}
           />
         );
       default:

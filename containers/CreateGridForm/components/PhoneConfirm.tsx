@@ -10,6 +10,7 @@ import {
   Link,
   PinInput,
   PinInputField,
+  Spinner,
 } from '@chakra-ui/react';
 import { Controller, useFormContext } from 'react-hook-form';
 import type { FieldValues } from '../../CreateGridForm';
@@ -17,9 +18,10 @@ import type { FieldValues } from '../../CreateGridForm';
 interface OwnProps {
   onResendCode: (phone: string, resending?: boolean) => void;
   resentCode: boolean;
+  loading: boolean;
 }
 
-const PhoneConfirm = ({ onResendCode, resentCode }: OwnProps) => {
+const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
   const {
     formState: { errors, isValid, dirtyFields },
     control,
@@ -104,14 +106,28 @@ const PhoneConfirm = ({ onResendCode, resentCode }: OwnProps) => {
               Code has been resent
             </FormHelperText>
           ) : null}
-          <Button
-            type="submit"
-            size="xl"
-            variant="outline"
-            isDisabled={!isValid}
-          >
-            Create Grid
-          </Button>
+          {loading ? (
+            <Button type="submit" size="xl" variant="outline" disabled>
+              {
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="yellow.300"
+                  size="lg"
+                ></Spinner>
+              }
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="xl"
+              variant="outline"
+              isDisabled={!isValid}
+            >
+              Create Grid
+            </Button>
+          )}
         </Box>
       </Container>
     </FormControl>
