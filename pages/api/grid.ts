@@ -18,7 +18,7 @@ function TokenGenerator() {
 }
 
 async function TokenDBCheck(token: string) {
-  const dbQuery = await prisma.grids.findFirst({
+  const dbQuery = await prisma.grid.findFirst({
     where: {
       token,
     },
@@ -41,7 +41,7 @@ export default async function GridHandler(
     const dataWithoutToken = req.body;
     const data = { ...dataWithoutToken, token };
     try {
-      const newGrid = await prisma.grids.create({
+      const newGrid = await prisma.grid.create({
         data,
       });
       console.log('newGrid: ', newGrid);
@@ -49,7 +49,7 @@ export default async function GridHandler(
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log(
-          'Error occured during Get request to grids Table: ',
+          'Error occured during Post request to grids Table: ',
           error.code,
           error.message
         );
@@ -58,9 +58,9 @@ export default async function GridHandler(
       throw error;
     }
   } else if (req.method === 'GET') {
-    const id = Number(req.query.id);
+    const id = req.query.id;
     try {
-      const grid = await prisma.grids.findFirst({
+      const grid = await prisma.grid.findFirst({
         where: {
           id,
         },
@@ -84,9 +84,9 @@ export default async function GridHandler(
       throw error;
     }
   } else if (req.method === 'DELETE') {
-    const id = Number(req.query.id);
+    const id = req.query.id;
     try {
-      const deletedGrid = await prisma.grids.delete({
+      const deletedGrid = await prisma.grid.delete({
         where: {
           id,
         },

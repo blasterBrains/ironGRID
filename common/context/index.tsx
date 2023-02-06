@@ -1,14 +1,16 @@
 import React, { createContext, Dispatch, useReducer } from 'react';
 import type {
-  GridActions, IronGridStateGrid,
-  IronGridStateUser, UserActions
+  GridActions,
+  GridWithSquares,
+  UserWithGridsAndSquares,
+  UserActions,
 } from '../types';
 import { Grid } from './reducers/gridReducer';
 import { User } from './reducers/userReducer';
 
 type InitialStateType = {
-  grid: IronGridStateGrid;
-  user: IronGridStateUser;
+  grid: GridWithSquares | {};
+  user: UserWithGridsAndSquares | {};
 };
 
 const initialState: InitialStateType = {

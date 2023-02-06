@@ -5,7 +5,7 @@ import { StoreProvider } from '../common/context';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className='app'>
+    <div className="app">
       <StoreProvider>
         <ChakraProvider theme={theme}>
           <Component {...pageProps} />

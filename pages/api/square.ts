@@ -1,37 +1,34 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
-import Error from 'next/error';
 import type {
-  Data,
-  NextApiRequestWithUserData,
-  NextApiResponseWithUserData,
+  NextApiRequestWithSquareData,
+  NextApiResponseWithSquareData,
 } from '../../common/types';
 
-export default async function userHandler(
-  req: NextApiRequestWithUserData,
-  res: NextApiResponseWithUserData
+export default async function handler(
+  req: NextApiRequestWithSquareData,
+  res: NextApiResponseWithSquareData
 ) {
   if (req.method === 'GET') {
-    const id = Number(req.query.id);
+    const { id } = req.query;
     try {
-      const user = await prisma.users.findUnique({
+      const square = await prisma.square.findFirst({
         where: {
           id,
         },
       });
-      return res.status(200).json(user);
+      return res.status(200).json(square);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientValidationError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to squares Table: ',
           error.message
         );
       }
       if (error instanceof Prisma.PrismaClientUnknownRequestError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to squares Table: ',
           error.message
         );
       }
@@ -41,15 +38,15 @@ export default async function userHandler(
   } else if (req.method === 'POST') {
     const data = req.body;
     try {
-      const newUser: Data = await prisma.users.create({
+      const newsquare = await prisma.square.create({
         data,
       });
-      console.log('newUser: ', newUser);
-      return res.status(200).json(newUser);
+      console.log('newsquare: ', newsquare);
+      return res.status(200).json(newsquare);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to squares Table: ',
           error.code,
           error.message
         );
@@ -57,19 +54,19 @@ export default async function userHandler(
       throw error;
     }
   } else if (req.method === 'DELETE') {
-    const id = Number(req.query.id);
+    const { id } = req.query;
     try {
-      const deletedUser: Data = await prisma.users.delete({
+      const deletedsquare = await prisma.square.delete({
         where: {
           id,
         },
       });
-      console.log('deletedUser: ', deletedUser);
-      return res.status(200).json(deletedUser);
+      console.log('deletedsquare: ', deletedsquare);
+      return res.status(200).json(deletedsquare);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log(
-          'Error occured during Get request to Users Table: ',
+          'Error occured during Get request to squares Table: ',
           error.code,
           error.message
         );
@@ -78,3 +75,8 @@ export default async function userHandler(
     }
   }
 }
+//{
+//     square_id: 2,
+//     grid_id: 1,
+//     index: 57,
+// }

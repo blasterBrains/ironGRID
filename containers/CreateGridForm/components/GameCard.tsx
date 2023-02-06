@@ -7,7 +7,11 @@ import {
   Flex,
   Heading,
   Text,
+  SkeletonCircle,
+  SkeletonText,
+  Spinner,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import Image from 'next/image';
 import type { Event } from '../../../common/utils/espn';
 import { formatDate } from '../../../common/utils/time';
@@ -50,6 +54,7 @@ const GameCard = ({ game, onClick, selected }: GameCardProps) => {
               width={100}
               height={100}
             />
+
             <Center mb="1rem">({game.competitors[1].record})</Center>
             <Box fontWeight={600}>
               <Text>{game.competitors[1].location}</Text>

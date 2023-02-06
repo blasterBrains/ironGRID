@@ -7,36 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Grids {
-  id      Int       @id @default(autoincrement())
+model Grid {
+  id         String      @id @default(uuid())
+  title      String
+  cost       Int
+  size       Int
+  x_values   Int[]
+  y_values   Int[]
+  first      Int?
+  second     Int?
+  third      Int?
+  final      Int?
+  token      String   @unique
+  reverse    Boolean  @default(false)
+  game_id    String   @db.VarChar
+  creator_id String
+  creator    User     @relation(fields: [creator_id], references: [id])
+  squares    Square[]
+}
+
+model User {
+  id      String      @id @default(uuid())
   name    String
-  cost    Int
-  size    Int
-  first   Int?
-  second  Int?
-  third   Int?
-  final   Int?
-  token   String    @unique
-  inverse Boolean   @default(false)
-  game_id String    @db.VarChar
-  squares Squares[]
+  phone   String      @unique
+  squares Square[]
+  grids    Grid[]
 }
 
-model Users {
-  id         Int       @id @default(autoincrement())
-  name       String
-  admin      Boolean   @default(false)
-  phone      String    @unique
-  short_code Int       @unique
-  squares    Squares[]
+model Square {
+  id       String     @id @default(uuid())
+  index    Int
+  owner_id String?
+  owner    User?      @relation(fields: [owner_id], references: [id])
+  grid_id  String
+  grid     Grid       @relation(fields: [grid_id], references: [id])
 }
 
-model Squares {
-  id      Int    @id @default(autoincrement())
-  user_id Int
-  grid_id Int
-  status  String @default("pending")
-  index   Int
-  grids   Grids  @relation(fields: [grid_id], references: [id])
-  users   Users  @relation(fields: [user_id], references: [id])
-}
