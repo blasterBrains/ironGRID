@@ -1,13 +1,19 @@
 import Router, { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useContext } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
+import { IronGridContext } from '../../common/context';
 import axios from '../../common/utils/api';
 import type { Grid, User } from '@prisma/client';
 import { Spinner } from '@chakra-ui/react';
+import {
+  UserTypes,
+  GridTypes,
+  UserWithGridsAndSquares,
+} from '../../common/types';
 
 export type FieldValues = Partial<
   Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
@@ -30,6 +36,8 @@ interface VerifyPhoneResponse {
 const CreateGridForm = () => {
   const [resentCode, setResentCode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { state, dispatch } = useContext(IronGridContext);
+  console.log('this is context state', state);
 
   const router = useRouter();
   const { page = CreateGridPage.game } = router.query as {
@@ -97,6 +105,11 @@ const CreateGridForm = () => {
           name,
           phone,
         });
+        const contextUserData = { ...userResponse, grids: [], squares: [] };
+        dispatch({
+          type: UserTypes.Create,
+          payload: contextUserData,
+        });
         return userResponse;
       } catch (error) {
         methods.setError('short_code', {
@@ -106,7 +119,7 @@ const CreateGridForm = () => {
         });
       }
     },
-    [methods]
+    [methods, dispatch]
   );
 
   const handleCreateGrid = useCallback(
@@ -122,6 +135,19 @@ const CreateGridForm = () => {
           reverse,
           creator_id,
         });
+        await dispatch({
+          type: GridTypes.Create,
+          payload: { ...gridResponse, squares: [] },
+        });
+        await dispatch({
+          type: UserTypes.Update,
+          payload: {
+            grids: [
+              ...(state.user as UserWithGridsAndSquares).grids,
+              gridResponse,
+            ],
+          },
+        });
         return gridResponse;
       } catch (error) {
         methods.setError('createGrid', {
@@ -131,9 +157,8 @@ const CreateGridForm = () => {
         });
       }
     },
-    [methods]
+    [dispatch, state.user, methods]
   );
-
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     async (data) => {
       console.log('onSubmit', data);
@@ -176,8 +201,9 @@ const CreateGridForm = () => {
             if (!grid) {
               throw new Error('Sorry, an unexpected error occured');
             }
+            // `/grid/${grid.token}`
             Router.push({
-              pathname: `/grid/${grid.token}`,
+              pathname: `/`,
             });
           } catch (error) {
             setLoading(false);
