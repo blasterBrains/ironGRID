@@ -136,26 +136,3 @@ const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
 };
 
 export default PhoneConfirm;
-
-// {loading ? (
-//   <Button type="submit" size="xl" variant="outline" disabled>
-//     {
-//       <Spinner
-//         thickness="4px"
-//         speed="0.65s"
-//         emptyColor="gray.200"
-//         color="yellow.300"
-//         size="lg"
-//       ></Spinner>
-//     }
-//   </Button>
-// ) : (
-//   <Button
-//     type="submit"
-//     size="xl"
-//     variant="outline"
-//     isDisabled={!isValid}
-//   >
-//     Create Grid
-//   </Button>
-// )}

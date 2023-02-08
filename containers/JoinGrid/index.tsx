@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import axios from '../../common/utils/api';
 
-interface Input {
+interface FieldPinInput {
   token: string;
 }
 
@@ -31,7 +31,7 @@ const JoinGrid = () => {
     control,
     formState: { errors, isValid, dirtyFields },
     setError,
-  } = useForm<Input>({
+  } = useForm<FieldPinInput>({
     mode: 'onBlur',
     defaultValues: {
       token: '',
@@ -56,11 +56,11 @@ const JoinGrid = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<Input> = async (data) => {
+  const onSubmit: SubmitHandler<FieldPinInput> = async (data) => {
     try {
       setLoading(true);
       setApiError(undefined);
-      let token = data.token.toUpperCase();
+      const token = data.token.toUpperCase();
 
       const response = await axios.get('/grid', {
         params: {
@@ -77,10 +77,7 @@ const JoinGrid = () => {
         setApiError(error.response?.data.reason as string);
         console.error(error.response?.data.reason);
       } else {
-        setError('token', {
-          type: 'custom',
-          message: 'Sorry, an unexpected error occured',
-        });
+        setApiError('Sorry, an unexpected error occured');
       }
     }
   };
