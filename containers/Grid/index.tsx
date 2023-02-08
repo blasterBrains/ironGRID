@@ -10,6 +10,7 @@ import type { Grid } from '@prisma/client';
 
 interface OwnProps {
   token: string;
+  grid: Grid & { x_values: number[]; y_values: number[] };
 }
 
 const mockGridData: Grid & { x_values: number[]; y_values: number[] } = {
@@ -29,6 +30,21 @@ const mockGridData: Grid & { x_values: number[]; y_values: number[] } = {
   y_values: [1, 3, 2, 7, 6, 9, 0, 5, 4, 8],
 };
 
+const reduceScores = (scores: number[], size: number = 10) => {
+  if (size === 10) {
+    return scores.reduce((acc: number[][], curr: number) => {
+      acc.push([curr]);
+      return acc;
+    }, []);
+  }
+  return scores.reduce<number[][]>((acc, current, index) => {
+    if (index % 2 === 0) {
+      acc.push([current, scores[index + 1]]);
+    }
+    return acc;
+  }, []);
+};
+
 const GridScore = ({
   scores = [],
   isYValue = false,
@@ -40,10 +56,22 @@ const GridScore = ({
   if (scores.length === 2) {
     if (isYValue) {
       return (
-        <Box>
-          <Text>{scores[0]}</Text>
-          <Text>/</Text>
-          <Text>{scores[1]}</Text>
+        <Box
+          display="flex"
+          position="relative"
+          justifyContent="center"
+          alignItems="center"
+          h="100%"
+        >
+          <Text position="absolute" top={1} left={1}>
+            {scores[0]}
+          </Text>
+          <Text position="absolute" top={0} left={0} bottom={0} right={0}>
+            /
+          </Text>
+          <Text position="absolute" bottom={1} right={1}>
+            {scores[1]}
+          </Text>
         </Box>
       );
     }
@@ -52,8 +80,10 @@ const GridScore = ({
   return <Text>{scores[0]}</Text>;
 };
 
-const Grid = ({ token }: OwnProps) => {
-  const gridSize = Math.sqrt(mockGridData.size);
+const Grid = ({ token, grid = mockGridData }: OwnProps) => {
+  const gridSize = Math.sqrt(grid.size);
+  const x_values = reduceScores(grid.x_values, gridSize);
+  const y_values = reduceScores(grid.y_values, gridSize);
 
   return (
     <Container
@@ -71,7 +101,7 @@ const Grid = ({ token }: OwnProps) => {
         pt={[20, 32]}
         pb={[16, 28]}
       >
-        {mockGridData.title}
+        {grid.title}
       </Heading>
       <ChakraGrid
         w="100%"
@@ -87,14 +117,16 @@ const Grid = ({ token }: OwnProps) => {
 
         {/* x values row */}
         {Array.apply(null, Array(gridSize)).map((v, i) => (
-          <GridItem key={`x_values_${i}`} bg="white" textAlign="center">
-            <GridScore
-              scores={
-                gridSize === 10
-                  ? [mockGridData.x_values[i]]
-                  : [mockGridData.x_values[i], mockGridData.x_values[i + 1]]
-              }
-            />
+          <GridItem
+            key={`x_values_${i}`}
+            bg="white"
+            textAlign="center"
+            fontSize="xs"
+            justifyContent="center"
+            alignItems="center"
+            display="flex"
+          >
+            <GridScore scores={x_values[i]} />
           </GridItem>
         ))}
 
@@ -102,7 +134,7 @@ const Grid = ({ token }: OwnProps) => {
         <GridItem rowSpan={gridSize} bg="white" />
 
         {/* Main grid including y values column */}
-        {Array.apply(null, Array(mockGridData.size + gridSize)).map((v, i) => {
+        {Array.apply(null, Array(grid.size + gridSize)).map((v, i) => {
           const isYValue = i % (gridSize + 1) === 0;
           const yIndex = i / (gridSize + 1);
           return (
@@ -110,10 +142,19 @@ const Grid = ({ token }: OwnProps) => {
               key={isYValue ? `y_values_${i}` : i}
               h={gridSize === 5 ? 12 : 12}
               bg="white"
+              fontSize="xs"
+              textAlign="center"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              {isYValue
-                ? `${mockGridData.y_values[yIndex][0]} / ${mockGridData.y_values[yIndex][1]}`
-                : null}
+              {isYValue ? (
+                <GridScore scores={y_values[yIndex]} isYValue />
+              ) : (
+                <Text fontSize={10} color="green.500">
+                  Available
+                </Text>
+              )}
             </GridItem>
           );
         })}
