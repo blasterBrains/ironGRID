@@ -130,7 +130,7 @@ const CreateGridForm = () => {
           reverse,
           creator_id,
         });
-        await dispatch({
+        dispatch({
           type: GridTypes.Create,
           payload: { ...gridResponse, squares: [] },
         });
@@ -188,8 +188,7 @@ const CreateGridForm = () => {
               throw new Error('Sorry, an unexpected error occured');
             }
             Router.push({
-              // `/grid/${grid.token}`
-              pathname: `/`,
+              pathname: `/grid/${grid.token}`,
             });
           } catch (error) {
             setLoading(false);
