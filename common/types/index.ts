@@ -36,7 +36,7 @@ export enum UserTypes {
 export type UserPayload = {
   [UserTypes.Create]: UserWithGridsAndSquares;
   [UserTypes.Delete]: Pick<UserWithGridsAndSquares, 'id'>;
-  [UserTypes.Update]: Partial<User>;
+  [UserTypes.Update]: Partial<UserWithGridsAndSquares>;
 };
 
 //grid-related state/context dispatch actions
