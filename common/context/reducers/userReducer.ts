@@ -1,9 +1,9 @@
 import type {
   GridActions,
-  UserWithGridsAndSquares,
   UserActions,
+  UserWithGridsAndSquares,
 } from '../../types';
-import { UserTypes } from '../../types';
+import { GridTypes, UserTypes } from '../../types';
 
 export function User(
   state: UserWithGridsAndSquares | {},
@@ -17,6 +17,12 @@ export function User(
       return {};
     case UserTypes.Update:
       return { ...state, ...payload };
+    case GridTypes.Create:
+      return {
+        ...state,
+        grids: [...((state as UserWithGridsAndSquares).grids || []), payload],
+      };
+      return state;
     default:
       return state;
   }
