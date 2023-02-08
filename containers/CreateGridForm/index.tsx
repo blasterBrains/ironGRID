@@ -1,19 +1,14 @@
+import type { Grid, User } from '@prisma/client';
 import Router, { useRouter } from 'next/router';
-import { useCallback, useState, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { IronGridContext } from '../../common/context';
+import { GridTypes, UserTypes } from '../../common/types';
+import axios from '../../common/utils/api';
 import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import PhoneConfirm from './components/PhoneConfirm';
-import { IronGridContext } from '../../common/context';
-import axios from '../../common/utils/api';
-import type { Grid, User } from '@prisma/client';
-import { Spinner } from '@chakra-ui/react';
-import {
-  UserTypes,
-  GridTypes,
-  UserWithGridsAndSquares,
-} from '../../common/types';
 
 export type FieldValues = Partial<
   Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
@@ -139,15 +134,6 @@ const CreateGridForm = () => {
           type: GridTypes.Create,
           payload: { ...gridResponse, squares: [] },
         });
-        await dispatch({
-          type: UserTypes.Update,
-          payload: {
-            grids: [
-              ...(state.user as UserWithGridsAndSquares).grids,
-              gridResponse,
-            ],
-          },
-        });
         return gridResponse;
       } catch (error) {
         methods.setError('createGrid', {
@@ -157,7 +143,7 @@ const CreateGridForm = () => {
         });
       }
     },
-    [dispatch, state.user, methods]
+    [dispatch, methods]
   );
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     async (data) => {
@@ -201,8 +187,8 @@ const CreateGridForm = () => {
             if (!grid) {
               throw new Error('Sorry, an unexpected error occured');
             }
-            // `/grid/${grid.token}`
             Router.push({
+              // `/grid/${grid.token}`
               pathname: `/`,
             });
           } catch (error) {
