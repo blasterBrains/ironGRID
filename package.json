@@ -9,7 +9,8 @@
     "lint": "next lint",
     "gen:theme-typings": "chakra-cli tokens ./common/theme/index.ts",
     "postinstall": "npm run gen:theme-typings",
-    "update-db": "dotenv -e .env.local npx prisma db push"
+    "update-db": "dotenv -e .env.local npx prisma db push",
+    "prisma-studio": "dotenv -e .env.local npx prisma studio"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.4.8",
