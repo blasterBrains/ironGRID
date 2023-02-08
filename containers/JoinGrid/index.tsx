@@ -1,50 +1,80 @@
 import {
-  Container,
-  Heading,
-  Stack,
-  Input,
-  Button,
-  FormControl,
   Box,
+  Button,
+  Container,
+  FormControl,
+  FormErrorMessage,
   FormHelperText,
+  Heading,
   HStack,
+  Input,
   PinInput,
   PinInputField,
-  FormErrorMessage,
-  Link,
   Spinner,
 } from '@chakra-ui/react';
-import { SubmitHandler, useForm, Controller } from 'react-hook-form';
-import Router, { useRouter } from 'next/router';
+import { isAxiosError } from 'axios';
+import Router from 'next/router';
+import { useState } from 'react';
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import axios from '../../common/utils/api';
-import { AxiosError, isAxiosError } from 'axios';
 
 interface Input {
   token: string;
 }
 
-export default function JoinGrid() {
+const JoinGrid = () => {
+  const [apiError, setApiError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
+
   const {
     handleSubmit,
-    register,
-    watch,
     control,
     formState: { errors, isValid, dirtyFields },
     setError,
-  } = useForm<Input>();
+  } = useForm<Input>({
+    mode: 'onBlur',
+    defaultValues: {
+      token: '',
+    },
+  });
+
+  let token = useWatch({
+    control,
+    name: 'token',
+  });
+
+  const renderError = () => {
+    if (!/^[a-zA-Z]+$/.test(token) && token !== '') {
+      return (
+        <FormErrorMessage>
+          Grid tokens must contain only letters
+        </FormErrorMessage>
+      );
+    }
+    if (apiError) {
+      return <FormErrorMessage>{apiError}</FormErrorMessage>;
+    }
+  };
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     try {
-      const { token } = data;
-      console.log('this is token: ', token);
+      setLoading(true);
+      setApiError(undefined);
+      let token = data.token.toUpperCase();
+
       const response = await axios.get('/grid', {
         params: {
           token,
         },
       });
-      console.log('this is the response: ', response);
+
+      Router.push({
+        pathname: `grid/${token}`,
+      });
     } catch (error) {
+      setLoading(false);
       if (isAxiosError(error)) {
+        setApiError(error.response?.data.reason as string);
         console.error(error.response?.data.reason);
       } else {
         setError('token', {
@@ -53,14 +83,10 @@ export default function JoinGrid() {
         });
       }
     }
-
-    // Router.push({
-    //   pathname: 'grid'
-    // })
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
+      <FormControl isInvalid={!!apiError || !isValid}>
         <Container
           centerContent
           justifyContent="center"
@@ -78,7 +104,7 @@ export default function JoinGrid() {
               Enter Grid Token
             </Heading>
 
-            <FormHelperText color="white" textAlign="center">
+            <FormHelperText color="white" textAlign="center" fontSize="lg">
               Join a pre-existing grid
             </FormHelperText>
           </Box>
@@ -89,6 +115,10 @@ export default function JoinGrid() {
               name="token"
               rules={{
                 required: 'Please enter grid token',
+                pattern: {
+                  value: /^[a-zA-Z]+$/,
+                  message: 'Grid tokens must contain only letters',
+                },
                 minLength: {
                   value: 4,
                   message: 'Invalid grid token',
@@ -99,21 +129,25 @@ export default function JoinGrid() {
                   {...restField}
                   otp
                   focusBorderColor="yellow.500"
+                  errorBorderColor="red.500"
                   type="alphanumeric"
-                  // placeholder="🏈"
                   size="lg"
                 >
-                  <PinInputField autoFocus ref={ref} color="white" />
-                  <PinInputField color="white" />
-                  <PinInputField color="white" />
-                  <PinInputField color="white" />
+                  <PinInputField
+                    autoFocus
+                    color="white"
+                    ref={ref}
+                    textTransform="uppercase"
+                  />
+                  <PinInputField color="white" textTransform="uppercase" />
+                  <PinInputField color="white" textTransform="uppercase" />
+                  <PinInputField color="white" textTransform="uppercase" />
                 </PinInput>
               )}
             />
           </HStack>
 
-          {/* <FormErrorMessage>{errors.message}</FormErrorMessage> */}
-
+          {renderError()}
           <Box py="6" position="fixed" bottom={2}>
             <Button
               type="submit"
@@ -121,11 +155,23 @@ export default function JoinGrid() {
               variant="outline"
               isDisabled={!isValid}
             >
-              Join Grid
+              {loading ? (
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="yellow.300"
+                  size="lg"
+                ></Spinner>
+              ) : (
+                'Join Grid'
+              )}
             </Button>
           </Box>
         </Container>
       </FormControl>
     </form>
   );
-}
+};
+
+export default JoinGrid;

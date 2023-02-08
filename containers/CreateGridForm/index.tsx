@@ -176,9 +176,9 @@ const CreateGridForm = () => {
             if (!grid) {
               throw new Error('Sorry, an unexpected error occured');
             }
-            Router.push({
-              pathname: `/grid/${grid.token}`,
-            });
+            // Router.push({
+            //   pathname: `/grid/${grid.token}`,
+            // });
           } catch (error) {
             setLoading(false);
             methods.setError('short_code', {

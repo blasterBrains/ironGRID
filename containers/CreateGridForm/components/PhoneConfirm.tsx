@@ -72,7 +72,12 @@ const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
               },
             }}
             render={({ field: { ref, ...restField } }) => (
-              <PinInput {...restField} otp focusBorderColor="yellow.500">
+              <PinInput
+                {...restField}
+                otp
+                focusBorderColor="yellow.500"
+                errorBorderColor="red.500"
+              >
                 <PinInputField autoFocus ref={ref} color="white" />
                 <PinInputField color="white" />
                 <PinInputField color="white" />
@@ -106,28 +111,24 @@ const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
               Code has been resent
             </FormHelperText>
           ) : null}
-          {loading ? (
-            <Button type="submit" size="xl" variant="outline" disabled>
-              {
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="yellow.300"
-                  size="lg"
-                ></Spinner>
-              }
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="xl"
-              variant="outline"
-              isDisabled={!isValid}
-            >
-              Create Grid
-            </Button>
-          )}
+          <Button
+            type="submit"
+            size="xl"
+            variant="outline"
+            isDisabled={!isValid}
+          >
+            {loading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="yellow.300"
+                size="lg"
+              ></Spinner>
+            ) : (
+              'Create Grid'
+            )}
+          </Button>
         </Box>
       </Container>
     </FormControl>
@@ -135,3 +136,26 @@ const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
 };
 
 export default PhoneConfirm;
+
+// {loading ? (
+//   <Button type="submit" size="xl" variant="outline" disabled>
+//     {
+//       <Spinner
+//         thickness="4px"
+//         speed="0.65s"
+//         emptyColor="gray.200"
+//         color="yellow.300"
+//         size="lg"
+//       ></Spinner>
+//     }
+//   </Button>
+// ) : (
+//   <Button
+//     type="submit"
+//     size="xl"
+//     variant="outline"
+//     isDisabled={!isValid}
+//   >
+//     Create Grid
+//   </Button>
+// )}

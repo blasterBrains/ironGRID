@@ -64,7 +64,7 @@ export type GridPayload = {
 
 export interface NextApiRequestWithGridData extends NextApiRequest {
   body: Prisma.GridCreateInput;
-  query: Pick<Grid, 'id'>;
+  query: Partial<Pick<Grid, 'id' | 'token'>>;
 }
 
 export interface NextApiResponsetWithGridData extends NextApiResponse {
