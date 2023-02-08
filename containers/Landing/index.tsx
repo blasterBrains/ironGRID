@@ -13,7 +13,8 @@ export default function Landing() {
           fontSize={['5xl', '6xl']}
           mt={[8, 10]}
           mb={[2, 10]}
-          color={colors.white}>
+          color={colors.white}
+        >
           ironGRID
         </Heading>
 
@@ -22,7 +23,8 @@ export default function Landing() {
             fontSize={[16, 20]}
             color={colors.white}
             textAlign="center"
-            px={[10, 20]}>
+            px={[10, 20]}
+          >
             Build a football square pool and share it with your friends!
           </Heading>
         </Container>
@@ -31,9 +33,11 @@ export default function Landing() {
           <Link href="/create-grid">
             <Button size="xl">Build</Button>
           </Link>
-          <Button size="xl" variant="outline">
-            Join
-          </Button>
+          <Link href="/join-grid">
+            <Button size="xl" variant="outline">
+              Join
+            </Button>
+          </Link>
         </Container>
       </Container>
     </Center>
