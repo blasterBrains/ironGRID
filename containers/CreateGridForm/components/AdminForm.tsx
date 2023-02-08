@@ -128,28 +128,24 @@ const AdminForm = ({ loading }: OwnProps) => {
         </Stack>
 
         <Box position="fixed" bottom={5} zIndex={1}>
-          {loading ? (
-            <Button type="submit" size="xl" variant="outline" disabled>
-              {
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="yellow.300"
-                  size="lg"
-                ></Spinner>
-              }
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="xl"
-              variant="outline"
-              isDisabled={!isValid}
-            >
-              Get Access Code
-            </Button>
-          )}
+          <Button
+            type="submit"
+            size="xl"
+            variant="outline"
+            isDisabled={!isValid}
+          >
+            {loading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="yellow.300"
+                size="lg"
+              ></Spinner>
+            ) : (
+              'Get Access Code'
+            )}
+          </Button>
         </Box>
       </Container>
     </FormControl>

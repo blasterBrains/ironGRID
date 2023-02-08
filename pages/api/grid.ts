@@ -58,30 +58,62 @@ export default async function GridHandler(
       throw error;
     }
   } else if (req.method === 'GET') {
-    const id = req.query.id;
-    try {
-      const grid = await prisma.grid.findFirst({
-        where: {
-          id,
-        },
-      });
-      console.log(grid);
-      return res.status(200).json(grid);
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
-        console.log(
-          'Error occured during Get request to grids Table: ',
-          error.message
-        );
+    const { id, token } = req.query;
+    if (id !== undefined) {
+      try {
+        const grid = await prisma.grid.findFirst({
+          where: {
+            id,
+          },
+        });
+        console.log(grid);
+        return res.status(200).json(grid);
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientValidationError) {
+          console.log(
+            'Error occured during Get request to grids Table: ',
+            error.message
+          );
+        }
+        if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+          console.log(
+            'Error occured during Get request to grids Table: ',
+            error.message
+          );
+        }
+        console.log('error: ', error);
+        throw error;
       }
-      if (error instanceof Prisma.PrismaClientUnknownRequestError) {
-        console.log(
-          'Error occured during Get request to grids Table: ',
-          error.message
-        );
+    } else if (token !== undefined) {
+      try {
+        const grid = await prisma.grid.findFirst({
+          where: {
+            token,
+          },
+        });
+        console.log(grid);
+        if (!grid) {
+          return res.status(404).json({
+            reason: 'Cannot find grid with that token',
+          });
+        }
+        return res.status(200).json(grid);
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientValidationError) {
+          console.log(
+            'Error occured during Get request to grids Table: ',
+            error.message
+          );
+        }
+        if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+          console.log(
+            'Error occured during Get request to grids Table: ',
+            error.message
+          );
+        }
+        console.log('error: ', error);
+        throw error;
       }
-      console.log('error: ', error);
-      throw error;
     }
   } else if (req.method === 'DELETE') {
     const id = req.query.id;
