@@ -6,7 +6,6 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
-import prisma from '../../lib/prisma';
 import { Grid, PrismaClient } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
 import { Event, getGame } from '../../common/utils/espn';
