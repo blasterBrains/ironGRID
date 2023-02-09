@@ -100,9 +100,9 @@ export const getUpcomingGames = async () => {
 };
 
 export const getGame = async (id: string) => {
-  const event = await axios.get<Event>(
+  const { data: game } = await axios.get<Event>(
     `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/${id}`
   );
 
-  return event;
+  return game;
 };

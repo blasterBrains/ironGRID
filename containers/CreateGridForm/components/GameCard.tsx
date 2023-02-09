@@ -7,11 +7,7 @@ import {
   Flex,
   Heading,
   Text,
-  SkeletonCircle,
-  SkeletonText,
-  Spinner,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import type { Event } from '../../../common/utils/espn';
 import { formatDate } from '../../../common/utils/time';

@@ -6,16 +6,24 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
-import type { Grid } from '@prisma/client';
+import prisma from '../../lib/prisma';
+import { Grid, PrismaClient } from '@prisma/client';
+import type { GetServerSideProps } from 'next';
+import { Event, getGame } from '../../common/utils/espn';
+import type { ParsedUrlQuery } from 'querystring';
 
-interface OwnProps {
+interface QueryParams extends ParsedUrlQuery {
   token: string;
-  grid: Grid & { x_values: number[]; y_values: number[] };
 }
 
-const mockGridData: Grid & { x_values: number[]; y_values: number[] } = {
+interface OwnProps {
+  grid?: Grid;
+  game?: Event;
+}
+
+const mockGridData: Grid = {
   id: '123456789',
-  title: 'Saca La Bolsita',
+  title: 'Grid Example',
   cost: 100,
   size: 25,
   token: 'HTAC',
@@ -24,7 +32,7 @@ const mockGridData: Grid & { x_values: number[]; y_values: number[] } = {
   second: null,
   third: null,
   final: null,
-  game_id: '12353',
+  game_id: '401438030',
   creator_id: '13243',
   x_values: [4, 3, 1, 9, 2, 7, 8, 6, 5, 0],
   y_values: [1, 3, 2, 7, 6, 9, 0, 5, 4, 8],
@@ -56,17 +64,16 @@ const GridScore = ({
   if (scores.length === 2) {
     if (isYValue) {
       return (
-        <Box
-          display="flex"
-          position="relative"
-          justifyContent="center"
-          alignItems="center"
-          h="100%"
-        >
+        <Box position="relative" w="100%" h="100%" display="flex">
           <Text position="absolute" top={1} left={1}>
             {scores[0]}
           </Text>
-          <Text position="absolute" top={0} left={0} bottom={0} right={0}>
+          <Text
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+          >
             /
           </Text>
           <Text position="absolute" bottom={1} right={1}>
@@ -80,7 +87,7 @@ const GridScore = ({
   return <Text>{scores[0]}</Text>;
 };
 
-const Grid = ({ token, grid = mockGridData }: OwnProps) => {
+const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
   const gridSize = Math.sqrt(grid.size);
   const x_values = reduceScores(grid.x_values, gridSize);
   const y_values = reduceScores(grid.y_values, gridSize);
@@ -140,7 +147,7 @@ const Grid = ({ token, grid = mockGridData }: OwnProps) => {
           return (
             <GridItem
               key={isYValue ? `y_values_${i}` : i}
-              h={gridSize === 5 ? 12 : 12}
+              h={gridSize === 5 ? 12 : 10}
               bg="white"
               fontSize="xs"
               textAlign="center"
@@ -161,6 +168,34 @@ const Grid = ({ token, grid = mockGridData }: OwnProps) => {
       </ChakraGrid>
     </Container>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<
+  OwnProps,
+  QueryParams
+> = async (context) => {
+  const { token = '' } = context.params || {};
+  const prisma = new PrismaClient();
+
+  try {
+    const grid =
+      (await prisma.grid.findFirst({
+        where: { token: token.toUpperCase() },
+      })) || undefined;
+    if (!grid) {
+      return { props: {} };
+    }
+    const game = await getGame(grid.game_id);
+    return {
+      props: {
+        game,
+        grid,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching Grid.tsx server side props:', error);
+    return { props: {} };
+  }
 };
 
 export default Grid;
