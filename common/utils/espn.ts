@@ -5,7 +5,22 @@ enum HomeAway {
   away,
 }
 
+interface Logo {
+  href: string;
+  height: number;
+  width: number;
+}
+
+interface Team {
+  ['$ref']: string;
+  id: string;
+  logos: Logo[];
+  color: string;
+  displayName: string;
+}
+
 interface Competitor {
+  ['$ref']: string;
   abbreviation: string;
   alternateColor: string;
   color: string;
@@ -21,6 +36,12 @@ interface Competitor {
   uid: string;
   order: number;
   winner: boolean;
+  team: Team;
+}
+
+interface Note {
+  headline: string;
+  type: string;
 }
 
 export interface Event {
@@ -39,6 +60,7 @@ export interface Event {
   week: number;
   weekText: number;
   competitors: Competitor[];
+  notes: Note[];
   fullStatus: {
     clock: number;
     displayClock: string;
@@ -101,8 +123,18 @@ export const getUpcomingGames = async () => {
 
 export const getGame = async (id: string) => {
   const { data: game } = await axios.get<Event>(
-    `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/${id}`
+    `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/${id}/competitions/${id}?lang=en&region=us`
   );
+
+  if (!game) return game;
+
+  const [{ data: homeTeam }, { data: awayTeam }] = await Promise.all([
+    axios.get<Team>(game.competitors[0].team['$ref']),
+    axios.get<Team>(game.competitors[1].team['$ref']),
+  ]);
+
+  game.competitors[0].team = homeTeam;
+  game.competitors[1].team = awayTeam;
 
   return game;
 };

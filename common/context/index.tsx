@@ -1,7 +1,7 @@
 import React, { createContext, Dispatch, useReducer } from 'react';
 import type {
   GridActions,
-  GridWithSquares,
+  GridWithSquaresAndCreator,
   UserWithGridsAndSquares,
   UserActions,
 } from '../types';
@@ -9,7 +9,7 @@ import { Grid } from './reducers/gridReducer';
 import { User } from './reducers/userReducer';
 
 type InitialStateType = {
-  grid: GridWithSquares | {};
+  grid: GridWithSquaresAndCreator | {};
   user: UserWithGridsAndSquares | {};
 };
 

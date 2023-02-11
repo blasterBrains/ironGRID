@@ -1,8 +1,12 @@
-import type { GridActions, UserActions, GridWithSquares } from '../../types';
+import type {
+  GridActions,
+  UserActions,
+  GridWithSquaresAndCreator,
+} from '../../types';
 import { GridTypes } from '../../types';
 
 export function Grid(
-  state: GridWithSquares | {},
+  state: GridWithSquaresAndCreator | {},
   action: GridActions | UserActions
 ) {
   const { type, payload } = action;
@@ -17,28 +21,31 @@ export function Grid(
       return { ...state, ...payload };
     case GridTypes.CreateSquare:
       return {
-        squares: [...((state as GridWithSquares).squares || []), payload],
+        squares: [
+          ...((state as GridWithSquaresAndCreator).squares || []),
+          payload,
+        ],
         ...state,
       };
     case GridTypes.DeleteSquare:
       return {
         squares:
-          (state as GridWithSquares).squares?.filter(
+          (state as GridWithSquaresAndCreator).squares?.filter(
             (square) => square.id !== payload.id
           ) || [],
         ...state,
       };
     case GridTypes.UpdateSquare:
-      let squareIndex = (state as GridWithSquares).squares?.findIndex(
+      let squareIndex = (state as GridWithSquaresAndCreator).squares?.findIndex(
         (square) => square.id === payload.id
       );
       if (squareIndex === undefined || squareIndex === -1) return state;
       let newSquare = {
-        ...(state as GridWithSquares).squares?.[squareIndex],
+        ...(state as GridWithSquaresAndCreator).squares?.[squareIndex],
         ...payload,
       };
       return {
-        squares: (state as GridWithSquares).squares?.splice(
+        squares: (state as GridWithSquaresAndCreator).squares?.splice(
           squareIndex,
           1,
           newSquare

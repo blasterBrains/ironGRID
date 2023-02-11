@@ -21,17 +21,10 @@ import {
   SliderTrack,
   Stack,
   Switch,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
 } from '@chakra-ui/react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { calculatePayouts } from '../../../common/utils/payouts';
+import Payouts from '../../../common/components/Payouts';
 import type { FieldValues } from '../../CreateGridForm';
 
 const GridRules = () => {
@@ -93,8 +86,6 @@ const GridRules = () => {
   const onCostChange = (value: number) => {
     setValue('cost', value);
   };
-
-  const payouts = gridSize && calculatePayouts(squareCost, gridSize, reverse);
 
   return (
     <FormControl isInvalid={isInvalid}>
@@ -246,42 +237,8 @@ const GridRules = () => {
 
           <FormErrorMessage>{formatError()}</FormErrorMessage>
 
-          {payouts ? (
-            <TableContainer>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th> </Th>
-                    <Th>1st</Th>
-                    <Th>2nd</Th>
-                    <Th>3rd</Th>
-                    <Th>Final</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  <Tr>
-                    <Td fontWeight={600} fontSize="xs" color="yellow.500">
-                      Payout
-                    </Td>
-                    <Td>${payouts.first}</Td>
-                    <Td>${payouts.second}</Td>
-                    <Td>${payouts.third}</Td>
-                    <Td>${payouts.fourth}</Td>
-                  </Tr>
-                  {reverse ? (
-                    <Tr>
-                      <Td fontWeight={600} fontSize="xs" color="yellow.500">
-                        Inverse
-                      </Td>
-                      <Td>${payouts.firstInverse}</Td>
-                      <Td>${payouts.secondInverse}</Td>
-                      <Td>${payouts.thirdInverse}</Td>
-                      <Td>${payouts.fourthInverse}</Td>
-                    </Tr>
-                  ) : null}
-                </Tbody>
-              </Table>
-            </TableContainer>
+          {gridSize && squareCost ? (
+            <Payouts gridSize={gridSize} cost={squareCost} reverse={reverse} />
           ) : null}
         </Stack>
 
@@ -301,22 +258,3 @@ const GridRules = () => {
 };
 
 export default GridRules;
-
-// the person with each team score's reverse outcome also wins
-/*
-First Quarter Payout 20%
-Half Time Payout 20%
-Third Quarter Payout 20%
-Final Payout 40%
-
-First Quarter Payout 15%
-First Quarter Inversed Payout 5%
-Half Time Payout 15%
-Half Time Inversed Payout 5%
-Third Quarter Payout 15%
-Third Quarter Inversed Payout 5%
-Final Payout 30%
-Final Inversed Payout 10%
-
-
-*/
