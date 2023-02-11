@@ -3,7 +3,11 @@ import Router, { useRouter } from 'next/router';
 import { useCallback, useContext, useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { IronGridContext } from '../../common/context';
-import { GridTypes, UserTypes } from '../../common/types';
+import {
+  GridTypes,
+  GridWithSquaresAndCreator,
+  UserTypes,
+} from '../../common/types';
 import axios from '../../common/utils/api';
 import AdminForm from './components/AdminForm';
 import ChooseGame from './components/ChooseGame';
@@ -122,17 +126,18 @@ const CreateGridForm = () => {
       console.log('creating grid', fields);
       const { game_id, title, size, cost, reverse, creator_id } = fields;
       try {
-        const { data: gridResponse } = await axios.post<Grid>('/grid', {
-          game_id,
-          title,
-          size,
-          cost,
-          reverse,
-          creator_id,
-        });
+        const { data: gridResponse } =
+          await axios.post<GridWithSquaresAndCreator>('/grid', {
+            game_id,
+            title,
+            size,
+            cost,
+            reverse,
+            creator_id,
+          });
         dispatch({
           type: GridTypes.Create,
-          payload: { ...gridResponse, squares: [] },
+          payload: { ...gridResponse },
         });
         return gridResponse;
       } catch (error) {

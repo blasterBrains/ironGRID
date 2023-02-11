@@ -1,26 +1,37 @@
 import {
   Box,
+  Button,
   Container,
   Grid as ChakraGrid,
   GridItem,
   Heading,
+  Image,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { Grid, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
 import { Event, getGame } from '../../common/utils/espn';
 import type { ParsedUrlQuery } from 'querystring';
+import { formatDate } from '../../common/utils/time';
+import type {
+  GridWithSquaresAndCreator,
+  SquareWithOwner,
+} from '../../common/types';
+import Payouts from '../../common/components/Payouts';
+import SquareModal from './components/SquareModal';
+import { useCallback, useState } from 'react';
 
 interface QueryParams extends ParsedUrlQuery {
   token: string;
 }
 
 interface OwnProps {
-  grid?: Grid;
+  grid?: GridWithSquaresAndCreator;
   game?: Event;
 }
 
-const mockGridData: Grid = {
+const mockGridData: GridWithSquaresAndCreator = {
   id: '123456789',
   title: 'Grid Example',
   cost: 100,
@@ -33,6 +44,12 @@ const mockGridData: Grid = {
   final: null,
   game_id: '401438030',
   creator_id: '13243',
+  squares: [],
+  creator: {
+    id: '12342134',
+    name: 'Daniel',
+    phone: '6614685030',
+  },
   x_values: [4, 3, 1, 9, 2, 7, 8, 6, 5, 0],
   y_values: [1, 3, 2, 7, 6, 9, 0, 5, 4, 8],
 };
@@ -59,7 +76,7 @@ const GridScore = ({
   scores: number[];
   isYValue?: boolean;
 }) => {
-  if (!scores.length) return null;
+  if (!scores.length) return <Text>TBD</Text>;
   if (scores.length === 2) {
     if (isYValue) {
       return (
@@ -87,28 +104,57 @@ const GridScore = ({
 };
 
 const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
+  console.log({ grid, game });
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [selectedSquare, setSelectedSquare] = useState<
+    SquareWithOwner | undefined
+  >();
+
+  const onSquareClick = (square?: SquareWithOwner) => {
+    setSelectedSquare(square);
+    onOpen();
+  };
+
+  // Render our 404 response
+  if (!grid || !game) {
+    return (
+      <Container
+        centerContent
+        bg="green.500"
+        minHeight="100vh"
+        justifyContent="center"
+      >
+        <Text>Sorry, we could not find the grid you are looking for.</Text>
+      </Container>
+    );
+  }
+
   const gridSize = Math.sqrt(grid.size);
   const x_values = reduceScores(grid.x_values, gridSize);
   const y_values = reduceScores(grid.y_values, gridSize);
+  let yIndex = 0;
 
   return (
-    <Container
-      centerContent
-      bg="green.500"
-      minHeight="100vh"
-      justifyContent="center"
-    >
-      <Heading
-        position="fixed"
-        top={5}
-        fontSize={[32, 32]}
-        color="white"
-        textAlign="center"
-        pt={[20, 32]}
-        pb={[16, 28]}
+    <Container mt={20} bg="green.500" minHeight="100vh" justifyContent="center">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        mb={10}
       >
-        {grid.title}
-      </Heading>
+        <Heading fontSize={[32, 32]} color="white" textAlign="center">
+          {grid.title}
+        </Heading>
+        <Text color="white" mb={5}>{`by ${grid.creator.name}`}</Text>
+        <Heading fontSize={18} color="white">
+          {game.notes[0].headline}
+        </Heading>
+        <Text color="white" mb={5}>
+          {formatDate(game.date)}
+        </Text>
+        <Text color="white">{`$${grid.cost} per square`}</Text>
+      </Box>
       <ChakraGrid
         w="100%"
         gap={1}
@@ -119,7 +165,21 @@ const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
         <GridItem colSpan={2} rowSpan={2} bg="green.500" />
 
         {/* Top team banner */}
-        <GridItem colSpan={gridSize} bg="white" />
+        <GridItem
+          colSpan={gridSize}
+          bg={`#${game.competitors[0].team.color}`}
+          display="flex"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          <Image
+            src={game.competitors[0].team.logos[3].href}
+            alt="Home Team Logo"
+            w={14}
+            fontSize="xs"
+          />
+          <Text color="white">{game.competitors[0].team.displayName}</Text>
+        </GridItem>
 
         {/* x values row */}
         {Array.apply(null, Array(gridSize)).map((v, i) => (
@@ -137,12 +197,34 @@ const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
         ))}
 
         {/* Left team banner */}
-        <GridItem rowSpan={gridSize} bg="white" />
+        <GridItem
+          rowSpan={gridSize}
+          bg={`#${game?.competitors[1].team.color}`}
+          display="flex"
+          justifyContent="flex-start"
+          alignItems="center"
+          flexDirection="column"
+          pt={3}
+        >
+          <Image
+            src={game.competitors[1].team.logos[3].href}
+            alt="Home Team Logo"
+            w={14}
+            fontSize="xs"
+          />
+          <Text ml={1} color="white">
+            {game.competitors[1].team.displayName}
+          </Text>
+        </GridItem>
 
         {/* Main grid including y values column */}
         {Array.apply(null, Array(grid.size + gridSize)).map((v, i) => {
+          // `isYValue` is a boolean that determines whether the current
+          // square in this iteration is the left score column box
           const isYValue = i % (gridSize + 1) === 0;
-          const yIndex = i / (gridSize + 1);
+          yIndex = isYValue ? i / (gridSize + 1) : yIndex;
+          const squareIndex = i - (yIndex + 1);
+          const currentSquare = grid.squares[squareIndex];
           return (
             <GridItem
               key={isYValue ? `y_values_${i}` : i}
@@ -157,14 +239,32 @@ const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
               {isYValue ? (
                 <GridScore scores={y_values[yIndex]} isYValue />
               ) : (
-                <Text fontSize={10} color="green.500">
-                  Available
-                </Text>
+                <Button
+                  fontSize={10}
+                  color="green.500"
+                  p={0}
+                  m={0}
+                  fontWeight={400}
+                  w="100%"
+                  h="100%"
+                  borderRadius={0}
+                  onClick={() => onSquareClick(currentSquare)}
+                >
+                  {currentSquare?.owner
+                    ? currentSquare.owner.name
+                    : 'Available'}
+                </Button>
               )}
             </GridItem>
           );
         })}
       </ChakraGrid>
+
+      {/* Modal to appear when user clicks on square */}
+      <SquareModal isOpen={isOpen} onClose={onClose} square={selectedSquare} />
+
+      {/* Payout display */}
+      <Payouts cost={grid.cost} gridSize={grid.size} reverse={grid.reverse} />
     </Container>
   );
 };
@@ -180,7 +280,16 @@ export const getServerSideProps: GetServerSideProps<
     const grid =
       (await prisma.grid.findFirst({
         where: { token: token.toUpperCase() },
+        include: {
+          squares: {
+            include: {
+              owner: true,
+            },
+          },
+          creator: true,
+        },
       })) || undefined;
+
     if (!grid) {
       return { props: {} };
     }

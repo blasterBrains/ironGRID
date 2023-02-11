@@ -8,6 +8,7 @@ import Select from './selects';
 import Slider from './sliders';
 import Switch from './switches';
 import Table from './tables';
+import Modal from './modals';
 
 // https://chakra-ui.com/docs/styled-system/customize-theme
 
@@ -28,6 +29,7 @@ const customTheme = extendTheme({
     Slider,
     Switch,
     Table,
+    Modal,
   },
 });
 

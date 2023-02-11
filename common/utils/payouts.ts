@@ -5,53 +5,53 @@ enum Quarter {
   fourth = 0.4,
 }
 
-enum InverseQuarter {
+enum ReverseQuarter {
   first = 0.15,
-  firstInverse = 0.05,
+  firstReverse = 0.05,
   second = 0.15,
-  secondInverse = 0.05,
+  secondReverse = 0.05,
   third = 0.15,
-  thirdInverse = 0.05,
+  thirdReverse = 0.05,
   fourth = 0.3,
-  fourthInverse = 0.1,
+  fourthReverse = 0.1,
 }
 
 export const calculatePayouts = (
   squareCost = 1,
   gridSize: number,
-  inverse = false
+  reverse = false
 ) => {
   const total = squareCost * gridSize;
-  if (inverse) {
+  if (reverse) {
     let remainder = 0;
 
-    let first = total * InverseQuarter.first;
+    let first = total * ReverseQuarter.first;
     remainder += first - Math.floor(first);
-    let firstInverse = total * InverseQuarter.firstInverse;
-    remainder += firstInverse - Math.floor(firstInverse);
+    let firstReverse = total * ReverseQuarter.firstReverse;
+    remainder += firstReverse - Math.floor(firstReverse);
 
-    let second = total * InverseQuarter.second;
+    let second = total * ReverseQuarter.second;
     remainder += second - Math.floor(second);
-    let secondInverse = total * InverseQuarter.secondInverse;
-    remainder += secondInverse - Math.floor(secondInverse);
+    let secondReverse = total * ReverseQuarter.secondReverse;
+    remainder += secondReverse - Math.floor(secondReverse);
 
-    let third = total * InverseQuarter.third;
+    let third = total * ReverseQuarter.third;
     remainder += third - Math.floor(third);
-    let thirdInverse = total * InverseQuarter.thirdInverse;
-    remainder += thirdInverse - Math.floor(thirdInverse);
+    let thirdReverse = total * ReverseQuarter.thirdReverse;
+    remainder += thirdReverse - Math.floor(thirdReverse);
 
-    let fourthInverse = total * InverseQuarter.fourthInverse;
-    remainder += fourthInverse - Math.floor(fourthInverse);
+    let fourthReverse = total * ReverseQuarter.fourthReverse;
+    remainder += fourthReverse - Math.floor(fourthReverse);
 
     return {
       first: Math.floor(first),
-      firstInverse: Math.floor(firstInverse),
+      firstReverse: Math.floor(firstReverse),
       second: Math.floor(second),
-      secondInverse: Math.floor(secondInverse),
+      secondReverse: Math.floor(secondReverse),
       third: Math.floor(third),
-      thirdInverse: Math.floor(thirdInverse),
-      fourth: total * InverseQuarter.fourth + remainder,
-      fourthInverse: Math.floor(fourthInverse),
+      thirdReverse: Math.floor(thirdReverse),
+      fourth: total * ReverseQuarter.fourth + remainder,
+      fourthReverse: Math.floor(fourthReverse),
     };
   }
   let remainder = 0;
