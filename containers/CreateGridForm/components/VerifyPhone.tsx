@@ -13,7 +13,7 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { Controller, useFormContext } from 'react-hook-form';
-import type { FieldValues } from '../../CreateGridForm';
+import type { FieldValues } from '..';
 
 interface OwnProps {
   onResendCode: (phone: string, resending?: boolean) => void;
@@ -21,7 +21,7 @@ interface OwnProps {
   loading: boolean;
 }
 
-const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
+const VerifyPhone = ({ onResendCode, resentCode, loading }: OwnProps) => {
   const {
     formState: { errors, isValid, dirtyFields },
     control,
@@ -135,4 +135,4 @@ const PhoneConfirm = ({ onResendCode, resentCode, loading }: OwnProps) => {
   );
 };
 
-export default PhoneConfirm;
+export default VerifyPhone;

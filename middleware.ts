@@ -14,7 +14,6 @@ const createUnverifiedResponse = () =>
   );
 
 const matchesRoute = (request: NextRequest) => {
-  console.log({ nextUrl: request.nextUrl.pathname, method: request.method });
   if (
     (request.nextUrl.pathname.startsWith('/api/grid') &&
       request.method === 'POST') ||

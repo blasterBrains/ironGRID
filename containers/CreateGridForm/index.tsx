@@ -9,10 +9,10 @@ import {
   UserTypes,
 } from '../../common/types';
 import axios from '../../common/utils/api';
-import AdminForm from './components/AdminForm';
+import SignInForm from './components/SignInForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
-import PhoneConfirm from './components/PhoneConfirm';
+import VerifyPhone from './components/VerifyPhone';
 
 export type FieldValues = Partial<
   Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
@@ -26,7 +26,7 @@ export enum CreateGridPage {
   phone = 'phone',
 }
 
-interface VerifyPhoneResponse {
+export interface VerifyPhoneResponse {
   status: string;
   valid: boolean;
   reason?: string;
@@ -35,8 +35,7 @@ interface VerifyPhoneResponse {
 const CreateGridForm = () => {
   const [resentCode, setResentCode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { state, dispatch } = useContext(IronGridContext);
-  console.log('this is context state', state);
+  const { dispatch } = useContext(IronGridContext);
 
   const router = useRouter();
   const { page = CreateGridPage.game } = router.query as {
@@ -222,10 +221,10 @@ const CreateGridForm = () => {
       case CreateGridPage.rules:
         return <GridRules />;
       case CreateGridPage.admin:
-        return <AdminForm loading={loading} />;
+        return <SignInForm loading={loading} />;
       case CreateGridPage.phone:
         return (
-          <PhoneConfirm
+          <VerifyPhone
             onResendCode={handleSendVerificationText}
             resentCode={resentCode}
             loading={loading}
