@@ -100,6 +100,8 @@ const CreateGridForm = () => {
           name,
           phone,
         });
+
+        console.log('userResponse in CreateGridForm index: ', userResponse);
         const contextUserData = { ...userResponse, grids: [], squares: [] };
         dispatch({
           type: UserTypes.Create,

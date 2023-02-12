@@ -1,10 +1,30 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import prisma from '../../lib/prisma';
 import { Prisma } from '@prisma/client';
+import type { User } from '@prisma/client';
 import type {
   NextApiRequestWithUserData,
   NextApiResponseWithUserData,
 } from '../../common/types';
+import { generateTokens } from '../../common/utils/authTokens';
+import { setCookie } from 'cookies-next';
+
+const setTokenCookies = async (
+  user: User,
+  req: NextApiRequestWithUserData,
+  res: NextApiResponseWithUserData
+) => {
+  const tokens = await generateTokens(user);
+  setCookie('x-access-token', tokens.accessToken, {
+    req,
+    res,
+  });
+  setCookie('x-refresh-token', tokens.refreshToken, {
+    req,
+    res,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+  });
+};
 
 export default async function userHandler(
   req: NextApiRequestWithUserData,
@@ -38,7 +58,7 @@ export default async function userHandler(
   } else if (req.method === 'POST') {
     const data = req.body;
     const { phone } = data;
-    console.log('data: ', data, 'phoooone: ', phone);
+    console.log('data in user.ts: ', data, 'phone in user.ts: ', phone);
     try {
       const userCheck = await prisma.user.findFirst({
         where: {
@@ -46,11 +66,16 @@ export default async function userHandler(
         },
       });
       console.log('userCheck: ', userCheck);
-      if (userCheck !== null) return res.status(200).json(userCheck);
+      if (userCheck !== null) {
+        await setTokenCookies(userCheck, req, res);
+        return res.status(200).json(userCheck);
+      }
       const newUser = await prisma.user.create({
         data,
       });
+      await setTokenCookies(newUser, req, res);
       console.log('newUser: ', newUser);
+
       return res.status(200).json(newUser);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

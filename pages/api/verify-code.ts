@@ -1,13 +1,12 @@
 import Twilio from 'twilio';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { VerificationAttemptContext } from 'twilio/lib/rest/verify/v2/verificationAttempt';
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
 const client = Twilio(accountSid, authToken);
 
-interface NextApiRequestWithPhone extends NextApiRequest {
+export interface NextApiRequestWithPhone extends NextApiRequest {
   body: {
     phone: string;
     short_code: string;
@@ -39,7 +38,7 @@ export default async function verifyCode(
       const { status, valid } = await client.verify.v2
         .services(serviceSid)
         .verificationChecks.create({ to: `+1${phone}`, code: shortCode });
-
+      console.log('status: ', status, 'valid: ', valid); // approved, true
       return res.status(200).json({
         status,
         valid,
