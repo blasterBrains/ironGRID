@@ -13,16 +13,18 @@ import SignInForm from './components/SignInForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
 import VerifyPhone from './components/VerifyPhone';
+import ChooseSport from './components/ChooseSport';
 
 export type FieldValues = Partial<
-  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
+  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse' | 'sport'>
 > &
   Partial<Pick<User, 'name' | 'phone'>> & { short_code?: string };
 
 export enum CreateGridPage {
-  rules = 'rules',
-  admin = 'admin',
+  sport = 'sport',
   game = 'game',
+  rules = 'rules',
+  signin = 'signin',
   phone = 'phone',
 }
 
@@ -38,7 +40,7 @@ const CreateGridForm = () => {
   const { dispatch } = useContext(IronGridContext);
 
   const router = useRouter();
-  const { page = CreateGridPage.game } = router.query as {
+  const { page = CreateGridPage.sport } = router.query as {
     page: CreateGridPage;
   };
   const methods = useForm({ mode: 'onBlur' });
@@ -125,7 +127,7 @@ const CreateGridForm = () => {
   const handleCreateGrid = useCallback(
     async (fields: FieldValues & { creator_id: string }) => {
       console.log('creating grid', fields);
-      const { game_id, title, size, cost, reverse, creator_id } = fields;
+      const { game_id, title, size, cost, reverse, creator_id, sport } = fields;
       try {
         const { data: gridResponse } =
           await axios.post<GridWithSquaresAndCreator>('/grid', {
@@ -135,6 +137,7 @@ const CreateGridForm = () => {
             cost,
             reverse,
             creator_id,
+            sport,
           });
         dispatch({
           type: GridTypes.Create,
@@ -155,6 +158,12 @@ const CreateGridForm = () => {
     async (data) => {
       console.log('onSubmit', data);
       switch (page) {
+        case CreateGridPage.sport:
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.game },
+          });
+          break;
         case CreateGridPage.game:
           Router.push({
             pathname: '/create-grid',
@@ -164,10 +173,10 @@ const CreateGridForm = () => {
         case CreateGridPage.rules:
           Router.push({
             pathname: '/create-grid',
-            query: { page: CreateGridPage.admin },
+            query: { page: CreateGridPage.signin },
           });
           break;
-        case CreateGridPage.admin:
+        case CreateGridPage.signin:
           if (data.phone) {
             handleSendVerificationText(data.phone);
           }
@@ -218,9 +227,11 @@ const CreateGridForm = () => {
 
   const renderPage = () => {
     switch (page) {
+      case CreateGridPage.game:
+        return <ChooseGame />;
       case CreateGridPage.rules:
         return <GridRules />;
-      case CreateGridPage.admin:
+      case CreateGridPage.signin:
         return <SignInForm loading={loading} />;
       case CreateGridPage.phone:
         return (
@@ -231,7 +242,7 @@ const CreateGridForm = () => {
           />
         );
       default:
-        return <ChooseGame />;
+        return <ChooseSport />;
     }
   };
 

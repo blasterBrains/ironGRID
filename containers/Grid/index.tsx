@@ -31,29 +31,6 @@ interface OwnProps {
   game?: Event;
 }
 
-const mockGridData: GridWithSquaresAndCreator = {
-  id: '123456789',
-  title: 'Grid Example',
-  cost: 100,
-  size: 25,
-  token: 'HTAC',
-  reverse: false,
-  first: null,
-  second: null,
-  third: null,
-  final: null,
-  game_id: '401438030',
-  creator_id: '13243',
-  squares: [],
-  creator: {
-    id: '12342134',
-    name: 'Daniel',
-    phone: '6614685030',
-  },
-  x_values: [4, 3, 1, 9, 2, 7, 8, 6, 5, 0],
-  y_values: [1, 3, 2, 7, 6, 9, 0, 5, 4, 8],
-};
-
 const reduceScores = (scores: number[], size: number = 10) => {
   if (size === 10) {
     return scores.reduce((acc: number[][], curr: number) => {
@@ -103,7 +80,7 @@ const GridScore = ({
   return <Text>{scores[0]}</Text>;
 };
 
-const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
+const Grid = ({ grid, game }: OwnProps & QueryParams) => {
   console.log({ grid, game });
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [selectedSquare, setSelectedSquare] = useState<
@@ -148,7 +125,7 @@ const Grid = ({ grid = mockGridData, game }: OwnProps & QueryParams) => {
         </Heading>
         <Text color="white" mb={5}>{`by ${grid.creator.name}`}</Text>
         <Heading fontSize={18} color="white">
-          {game.notes[0].headline}
+          {game.notes[0]?.headline || game.group?.name}
         </Heading>
         <Text color="white" mb={5}>
           {formatDate(game.date)}
@@ -293,7 +270,7 @@ export const getServerSideProps: GetServerSideProps<
     if (!grid) {
       return { props: {} };
     }
-    const game = await getGame(grid.game_id);
+    const game = await getGame(grid.game_id, grid.sport);
     return {
       props: {
         game,

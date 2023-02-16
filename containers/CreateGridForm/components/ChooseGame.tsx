@@ -6,16 +6,12 @@ import {
   Heading,
   Spinner,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useCallback, useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import type { Event } from '../../../common/utils/espn';
 import { getUpcomingGames } from '../../../common/utils/espn';
 import type { FieldValues } from '../../CreateGridForm';
 import GameCard from './GameCard';
-
-interface OwnProps {
-  loading: boolean;
-}
 
 const ChooseGame = () => {
   const [selectedGame, setSelectedGame] = useState<string | undefined>();
@@ -26,19 +22,25 @@ const ChooseGame = () => {
     formState: { errors },
     setValue,
     register,
+    control,
   } = useFormContext<FieldValues>();
 
-  const fetchUpcomingGames = async () => {
+  const sport = useWatch({
+    control,
+    name: 'sport',
+  });
+
+  const fetchUpcomingGames = useCallback(async () => {
     setGamesLoading(true);
     try {
-      const games = await getUpcomingGames();
+      const games = await getUpcomingGames(sport);
       console.log(games);
       setUpcomingGames(games);
       setGamesLoading(false);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [sport]);
 
   const handleGameCardSelect = (id: string) => {
     setValue('game_id', id);
@@ -47,7 +49,7 @@ const ChooseGame = () => {
 
   useEffect(() => {
     fetchUpcomingGames();
-  }, []);
+  }, [fetchUpcomingGames]);
 
   return (
     <FormControl isInvalid={!errors.game_id}>

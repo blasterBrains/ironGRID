@@ -34,7 +34,7 @@ const GameCard = ({ game, onClick, selected }: GameCardProps) => {
       <CardHeader>
         <Box>
           <Heading size="sm" color="gray.800">
-            {game.note}
+            {game.note || game.group?.name}
           </Heading>
         </Box>
         <Box marginTop="1rem">

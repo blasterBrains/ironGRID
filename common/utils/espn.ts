@@ -1,3 +1,4 @@
+import { Sport as SportType } from '@prisma/client';
 import axios from 'axios';
 
 enum HomeAway {
@@ -61,6 +62,12 @@ export interface Event {
   weekText: number;
   competitors: Competitor[];
   notes: Note[];
+  group?: {
+    abbreviations: string;
+    groupId: string;
+    name: string;
+    shortName: string;
+  };
   fullStatus: {
     clock: number;
     displayClock: string;
@@ -100,13 +107,13 @@ export interface Sport {
   https://gist.github.com/nntrn/ee26cb2a0716de0947a0a4e9a157bc1c#v2sportsfootballleaguesnflcalendar
  */
 
-export const getUpcomingGames = async () => {
+export const getUpcomingGames = async (sport: SportType = SportType.nfl) => {
   const { data } = await axios.get<{ sports: Sport[] }>(
     'https://site.web.api.espn.com/apis/v2/scoreboard/header',
     {
       params: {
-        sport: 'football',
-        league: 'nfl',
+        sport: sport === SportType.nfl ? 'football' : 'basketball',
+        league: sport,
         region: 'us',
         lang: 'en',
         contentorigin: 'espn',
@@ -121,9 +128,10 @@ export const getUpcomingGames = async () => {
   return data.sports[0]?.leagues[0]?.events || [];
 };
 
-export const getGame = async (id: string) => {
+export const getGame = async (id: string, sport: SportType = SportType.nfl) => {
+  const sportType = sport === SportType.nfl ? 'football' : 'basketball';
   const { data: game } = await axios.get<Event>(
-    `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/${id}/competitions/${id}?lang=en&region=us`
+    `http://sports.core.api.espn.com/v2/sports/${sportType}/leagues/${sport}/events/${id}/competitions/${id}?lang=en&region=us`
   );
 
   if (!game) return game;

@@ -15,6 +15,12 @@ module.exports = {
         port: '',
         pathname: '/i/teamlogos/nfl/500/scoreboard/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'a.espncdn.com',
+        port: '',
+        pathname: '/i/teamlogos/nba/500/scoreboard/**',
+      },
     ],
   },
 };
