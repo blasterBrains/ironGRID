@@ -1,8 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import type { Prisma, Grid, Square, User } from '@prisma/client';
 
-export interface GridWithSquares extends Grid {
-  squares: Square[];
+export interface SquareWithOwner extends Square {
+  owner: User | null;
+}
+
+export interface GridWithSquaresAndCreator extends Grid {
+  squares: SquareWithOwner[];
+  creator: User;
 }
 
 export interface UserWithGridsAndSquares extends User {
@@ -54,10 +59,10 @@ export enum GridTypes {
 
 //typings for each grid action type's payload
 export type GridPayload = {
-  [GridTypes.Create]: GridWithSquares;
-  [GridTypes.Delete]: Pick<GridWithSquares, 'id'>;
+  [GridTypes.Create]: GridWithSquaresAndCreator;
+  [GridTypes.Delete]: Pick<GridWithSquaresAndCreator, 'id'>;
   [GridTypes.Update]: Partial<Grid>;
-  [GridTypes.CreateSquare]: GridWithSquares;
+  [GridTypes.CreateSquare]: GridWithSquaresAndCreator;
   [GridTypes.DeleteSquare]: Pick<Square, 'id'>;
   [GridTypes.UpdateSquare]: Partial<Square>;
 };
@@ -91,7 +96,10 @@ export interface NextApiResponseWithUserData extends NextApiResponse {
   body: User;
 }
 
-//types for espn.ts
+/* 
+  ESPN Types
+ */
+
 export enum HomeAway {
   home,
   away,

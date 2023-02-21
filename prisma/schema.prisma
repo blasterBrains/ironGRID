@@ -24,6 +24,12 @@ model Grid {
   creator_id String
   creator    User     @relation(fields: [creator_id], references: [id])
   squares    Square[]
+  sport      Sport    @default(nfl)
+}
+
+enum Sport {
+  nfl
+  nba
 }
 
 model User {

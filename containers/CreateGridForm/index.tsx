@@ -3,26 +3,32 @@ import Router, { useRouter } from 'next/router';
 import { useCallback, useContext, useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { IronGridContext } from '../../common/context';
-import { GridTypes, UserTypes } from '../../common/types';
+import {
+  GridTypes,
+  GridWithSquaresAndCreator,
+  UserTypes,
+} from '../../common/types';
 import axios from '../../common/utils/api';
-import AdminForm from './components/AdminForm';
+import SignInForm from './components/SignInForm';
 import ChooseGame from './components/ChooseGame';
 import GridRules from './components/GridRules';
-import PhoneConfirm from './components/PhoneConfirm';
+import VerifyPhone from './components/VerifyPhone';
+import ChooseSport from './components/ChooseSport';
 
 export type FieldValues = Partial<
-  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse'>
+  Pick<Grid, 'game_id' | 'title' | 'size' | 'cost' | 'reverse' | 'sport'>
 > &
   Partial<Pick<User, 'name' | 'phone'>> & { short_code?: string };
 
 export enum CreateGridPage {
-  rules = 'rules',
-  admin = 'admin',
+  sport = 'sport',
   game = 'game',
+  rules = 'rules',
+  signin = 'signin',
   phone = 'phone',
 }
 
-interface VerifyPhoneResponse {
+export interface VerifyPhoneResponse {
   status: string;
   valid: boolean;
   reason?: string;
@@ -31,11 +37,10 @@ interface VerifyPhoneResponse {
 const CreateGridForm = () => {
   const [resentCode, setResentCode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { state, dispatch } = useContext(IronGridContext);
-  console.log('this is context state', state);
+  const { dispatch } = useContext(IronGridContext);
 
   const router = useRouter();
-  const { page = CreateGridPage.game } = router.query as {
+  const { page = CreateGridPage.sport } = router.query as {
     page: CreateGridPage;
   };
   const methods = useForm({ mode: 'onBlur' });
@@ -100,6 +105,8 @@ const CreateGridForm = () => {
           name,
           phone,
         });
+
+        console.log('userResponse in CreateGridForm index: ', userResponse);
         const contextUserData = { ...userResponse, grids: [], squares: [] };
         dispatch({
           type: UserTypes.Create,
@@ -120,19 +127,21 @@ const CreateGridForm = () => {
   const handleCreateGrid = useCallback(
     async (fields: FieldValues & { creator_id: string }) => {
       console.log('creating grid', fields);
-      const { game_id, title, size, cost, reverse, creator_id } = fields;
+      const { game_id, title, size, cost, reverse, creator_id, sport } = fields;
       try {
-        const { data: gridResponse } = await axios.post<Grid>('/grid', {
-          game_id,
-          title,
-          size,
-          cost,
-          reverse,
-          creator_id,
-        });
+        const { data: gridResponse } =
+          await axios.post<GridWithSquaresAndCreator>('/grid', {
+            game_id,
+            title,
+            size,
+            cost,
+            reverse,
+            creator_id,
+            sport,
+          });
         dispatch({
           type: GridTypes.Create,
-          payload: { ...gridResponse, squares: [] },
+          payload: { ...gridResponse },
         });
         return gridResponse;
       } catch (error) {
@@ -149,6 +158,12 @@ const CreateGridForm = () => {
     async (data) => {
       console.log('onSubmit', data);
       switch (page) {
+        case CreateGridPage.sport:
+          Router.push({
+            pathname: '/create-grid',
+            query: { page: CreateGridPage.game },
+          });
+          break;
         case CreateGridPage.game:
           Router.push({
             pathname: '/create-grid',
@@ -158,10 +173,10 @@ const CreateGridForm = () => {
         case CreateGridPage.rules:
           Router.push({
             pathname: '/create-grid',
-            query: { page: CreateGridPage.admin },
+            query: { page: CreateGridPage.signin },
           });
           break;
-        case CreateGridPage.admin:
+        case CreateGridPage.signin:
           if (data.phone) {
             handleSendVerificationText(data.phone);
           }
@@ -212,20 +227,22 @@ const CreateGridForm = () => {
 
   const renderPage = () => {
     switch (page) {
+      case CreateGridPage.game:
+        return <ChooseGame />;
       case CreateGridPage.rules:
         return <GridRules />;
-      case CreateGridPage.admin:
-        return <AdminForm loading={loading} />;
+      case CreateGridPage.signin:
+        return <SignInForm loading={loading} />;
       case CreateGridPage.phone:
         return (
-          <PhoneConfirm
+          <VerifyPhone
             onResendCode={handleSendVerificationText}
             resentCode={resentCode}
             loading={loading}
           />
         );
       default:
-        return <ChooseGame />;
+        return <ChooseSport />;
     }
   };
 

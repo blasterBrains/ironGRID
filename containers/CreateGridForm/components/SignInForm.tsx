@@ -20,7 +20,7 @@ interface OwnProps {
   loading: boolean;
 }
 
-const AdminForm = ({ loading }: OwnProps) => {
+const SignInForm = ({ loading }: OwnProps) => {
   const {
     formState: { errors, dirtyFields, isValid },
     register,
@@ -152,4 +152,4 @@ const AdminForm = ({ loading }: OwnProps) => {
   );
 };
 
-export default AdminForm;
+export default SignInForm;

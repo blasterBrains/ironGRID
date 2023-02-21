@@ -7,11 +7,7 @@ import {
   Flex,
   Heading,
   Text,
-  SkeletonCircle,
-  SkeletonText,
-  Spinner,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import type { Event } from '../../../common/utils/espn';
 import { formatDate } from '../../../common/utils/time';
@@ -38,7 +34,7 @@ const GameCard = ({ game, onClick, selected }: GameCardProps) => {
       <CardHeader>
         <Box>
           <Heading size="sm" color="gray.800">
-            {game.note}
+            {game.note || game.group?.name}
           </Heading>
         </Box>
         <Box marginTop="1rem">
