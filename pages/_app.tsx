@@ -1,7 +1,8 @@
-import type { AppProps } from 'next/app';
+import type { AppProps, AppContext } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../common/theme';
 import { StoreProvider } from '../common/context';
+import { ContentContext } from 'twilio/lib/rest/content/v1/content';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

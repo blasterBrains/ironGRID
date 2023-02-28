@@ -1,5 +1,10 @@
 import type { Grid, User } from '@prisma/client';
 import Router, { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { verifyRefreshToken } from '../../common/utils/authTokens';
+import { verifyAccessToken } from '../../common/utils/authTokens';
+import { generateTokens } from '../../common/utils/authTokens';
+import { setCookie } from 'cookies-next';
 import { useCallback, useContext, useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { IronGridContext } from '../../common/context';
@@ -34,7 +39,12 @@ export interface VerifyPhoneResponse {
   reason?: string;
 }
 
-const CreateGridForm = () => {
+type CreateGridFormProps = {
+  user: User;
+};
+
+const CreateGridForm = ({ user }: CreateGridFormProps) => {
+  console.log('user: ', user);
   const [resentCode, setResentCode] = useState(false);
   const [loading, setLoading] = useState(false);
   const { dispatch } = useContext(IronGridContext);
@@ -171,6 +181,7 @@ const CreateGridForm = () => {
           });
           break;
         case CreateGridPage.rules:
+          // check user context
           Router.push({
             pathname: '/create-grid',
             query: { page: CreateGridPage.signin },
@@ -254,3 +265,34 @@ const CreateGridForm = () => {
 };
 
 export default CreateGridForm;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req, res } = context;
+  const cookies = req.cookies;
+
+  const accessToken = cookies['x-access-token'];
+  const refreshToken = cookies['x-refresh-token'];
+
+  const verifiedRefreshToken = await verifyRefreshToken(refreshToken);
+
+  if (verifiedRefreshToken) {
+    const verifiedAccessToken = await verifyAccessToken(accessToken);
+    if (verifiedAccessToken) {
+      return { props: { user: verifiedAccessToken } };
+    } else {
+      const tokens = await generateTokens(verifiedRefreshToken);
+      setCookie('x-access-token', tokens.accessToken, {
+        req,
+        res,
+      });
+      setCookie('x-refresh-token', tokens.refreshToken, {
+        req,
+        res,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      });
+      return { props: { user: verifiedRefreshToken } };
+    }
+  }
+
+  return { props: { user: {} } };
+};
