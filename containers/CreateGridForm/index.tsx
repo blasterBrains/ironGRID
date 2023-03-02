@@ -121,17 +121,18 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
     async (fields: FieldValues) => {
       const { phone, name } = fields;
       try {
+        setLoading(true);
         const { data: userResponse } = await axios.post<User>('/user', {
           name,
           phone,
         });
-
         console.log('userResponse in CreateGridForm index: ', userResponse);
         const contextUserData = { ...userResponse, grids: [], squares: [] };
         dispatch({
           type: UserTypes.Create,
           payload: contextUserData,
         });
+        setLoading(false);
         return userResponse;
       } catch (error) {
         methods.setError('short_code', {
@@ -149,6 +150,7 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
       console.log('creating grid', fields);
       const { game_id, title, size, cost, reverse, creator_id, sport } = fields;
       try {
+        setLoading(true);
         const { data: gridResponse } =
           await axios.post<GridWithSquaresAndCreator>('/grid', {
             game_id,
@@ -163,6 +165,7 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
           type: GridTypes.Create,
           payload: { ...gridResponse },
         });
+        setLoading(false);
         return gridResponse;
       } catch (error) {
         methods.setError('createGrid', {
@@ -174,6 +177,36 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
     },
     [dispatch, methods]
   );
+
+  const createGridAndRedirect = useCallback(
+    async (user: UserWithGridsAndSquares, data: FieldValues) => {
+      try {
+        setLoading(true);
+        if (!data.game_id) {
+          throw new Error('Sorry, an unexpected error occured');
+        }
+        const grid = await handleCreateGrid({
+          ...data,
+          creator_id: user.id,
+        });
+        if (!grid) {
+          throw new Error('Sorry, an unexpected error occured');
+        }
+        Router.push({
+          pathname: `/grid/${grid.token}`,
+        });
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        methods.setError('short_code', {
+          type: 'custom',
+          message: (error as { message: string }).message,
+        });
+      }
+    },
+    [methods, handleCreateGrid]
+  );
+
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     async (data) => {
       console.log('onSubmit', data);
@@ -191,35 +224,10 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
           });
           break;
         case CreateGridPage.rules:
-          // check user context
           const user = state.user as UserWithGridsAndSquares;
-          if (user.id) {
-            try {
-              setLoading(true);
 
-              if (!data.game_id) {
-                setLoading(false);
-                throw new Error('Sorry, an unexpected error occured');
-              }
-              const grid = await handleCreateGrid({
-                ...data,
-                creator_id: user.id,
-              });
-              setLoading(false);
-              if (!grid) {
-                throw new Error('Sorry, an unexpected error occured');
-              }
-              Router.push({
-                pathname: `/grid/${grid.token}`,
-              });
-            } catch (error) {
-              setLoading(false);
-              methods.setError('short_code', {
-                type: 'custom',
-                message: (error as { message: string }).message,
-              });
-            }
-            break;
+          if (user.id) {
+            createGridAndRedirect(user, data);
           } else {
             Router.push({
               pathname: '/create-grid',
@@ -234,30 +242,15 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
           break;
         default:
           try {
-            setLoading(true);
             await handleVerifyPhone(data);
-            const user = await handleCreateUser(data);
+            const user = (await handleCreateUser(
+              data
+            )) as UserWithGridsAndSquares;
             if (!user) {
-              setLoading(false);
               throw new Error('Sorry, an unexpected error occured');
             }
-            if (!data.game_id) {
-              setLoading(false);
-              throw new Error('Sorry, an unexpected error occured');
-            }
-            const grid = await handleCreateGrid({
-              ...data,
-              creator_id: user.id,
-            });
-            setLoading(false);
-            if (!grid) {
-              throw new Error('Sorry, an unexpected error occured');
-            }
-            Router.push({
-              pathname: `/grid/${grid.token}`,
-            });
+            createGridAndRedirect(user, data);
           } catch (error) {
-            setLoading(false);
             methods.setError('short_code', {
               type: 'custom',
               message: (error as { message: string }).message,
@@ -271,8 +264,9 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
       handleSendVerificationText,
       handleVerifyPhone,
       handleCreateUser,
-      handleCreateGrid,
       methods,
+      createGridAndRedirect,
+      state.user,
     ]
   );
 
