@@ -32,6 +32,7 @@ export type UserActions = ActionMap<UserPayload>[keyof ActionMap<UserPayload>];
 
 //dispatch user type literals
 export enum UserTypes {
+  Authenticate = 'AUTHENTICATE_USER',
   Create = 'CREATE_USER',
   Delete = 'DELETE_USER',
   Update = 'UPDATE_USER',
@@ -39,6 +40,7 @@ export enum UserTypes {
 
 //typings for each user action type's payload
 export type UserPayload = {
+  [UserTypes.Authenticate]: User;
   [UserTypes.Create]: UserWithGridsAndSquares;
   [UserTypes.Delete]: Pick<UserWithGridsAndSquares, 'id'>;
   [UserTypes.Update]: Partial<UserWithGridsAndSquares>;

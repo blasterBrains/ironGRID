@@ -11,6 +11,7 @@ export function User(
 ) {
   const { type, payload } = action;
   switch (type) {
+    case UserTypes.Authenticate:
     case UserTypes.Create:
       return payload;
     case UserTypes.Delete:
@@ -22,7 +23,6 @@ export function User(
         ...state,
         grids: [...((state as UserWithGridsAndSquares).grids || []), payload],
       };
-      return state;
     default:
       return state;
   }

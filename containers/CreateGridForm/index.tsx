@@ -5,13 +5,14 @@ import { verifyRefreshToken } from '../../common/utils/authTokens';
 import { verifyAccessToken } from '../../common/utils/authTokens';
 import { generateTokens } from '../../common/utils/authTokens';
 import { setCookie } from 'cookies-next';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState, useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { IronGridContext } from '../../common/context';
 import {
   GridTypes,
   GridWithSquaresAndCreator,
   UserTypes,
+  UserWithGridsAndSquares,
 } from '../../common/types';
 import axios from '../../common/utils/api';
 import SignInForm from './components/SignInForm';
@@ -47,7 +48,16 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
   console.log('user: ', user);
   const [resentCode, setResentCode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { dispatch } = useContext(IronGridContext);
+  const { state, dispatch } = useContext(IronGridContext);
+
+  useEffect(() => {
+    if (user) {
+      dispatch({
+        type: UserTypes.Authenticate,
+        payload: user,
+      });
+    }
+  }, [user, dispatch]);
 
   const router = useRouter();
   const { page = CreateGridPage.sport } = router.query as {
@@ -182,10 +192,40 @@ const CreateGridForm = ({ user }: CreateGridFormProps) => {
           break;
         case CreateGridPage.rules:
           // check user context
-          Router.push({
-            pathname: '/create-grid',
-            query: { page: CreateGridPage.signin },
-          });
+          const user = state.user as UserWithGridsAndSquares;
+          if (user.id) {
+            try {
+              setLoading(true);
+
+              if (!data.game_id) {
+                setLoading(false);
+                throw new Error('Sorry, an unexpected error occured');
+              }
+              const grid = await handleCreateGrid({
+                ...data,
+                creator_id: user.id,
+              });
+              setLoading(false);
+              if (!grid) {
+                throw new Error('Sorry, an unexpected error occured');
+              }
+              Router.push({
+                pathname: `/grid/${grid.token}`,
+              });
+            } catch (error) {
+              setLoading(false);
+              methods.setError('short_code', {
+                type: 'custom',
+                message: (error as { message: string }).message,
+              });
+            }
+            break;
+          } else {
+            Router.push({
+              pathname: '/create-grid',
+              query: { page: CreateGridPage.signin },
+            });
+          }
           break;
         case CreateGridPage.signin:
           if (data.phone) {
